@@ -2,13 +2,14 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get { req async in
-        "It works!"
+    app.get("ping") { req async in
+        "pong"
     }
-
-    app.get("hello") { req async -> String in
-        "Hello, world!"
-    }
-
-    try app.register(collection: TodoController())
+    
+    try app.register(collection: AuthenticationController())
+    
+    let authenticated = app.grouped(User.guardMiddleware())
+    
+    try authenticated.register(collection: TreeController())
+    try authenticated.register(collection: PersonController())
 }
