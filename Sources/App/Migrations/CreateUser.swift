@@ -1,21 +1,20 @@
 import Fluent
 
-extension User {
-    struct CreateUser: AsyncMigration {
-        let name: String = "\(CreateUser.self)"
-        
-        func prepare(on database: Database) async throws {
-            try await database.schema("users")
-                .id()
-                .field("email", .string, .required)
-                .field("name", .string, .required)
-                .field("password_hash", .string, .required)
-                .unique(on: "email")
-                .create()
-        }
-        
-        func revert(on database: Database) async throws {
-            try await database.schema("users").delete()
-        }
+struct CreateUser: AsyncMigration {
+    func prepare(on database: Database) async throws {
+        try await database.schema("users")
+            .id()
+            .field("email", .string, .required)
+            .field("name", .string, .required)
+            .field("password_hash", .string, .required)
+            .field("created_at", .datetime, .required)
+            .field("updated_at", .datetime)
+            .field("deleted_at", .datetime)
+            .unique(on: "email")
+            .create()
+    }
+    
+    func revert(on database: Database) async throws {
+        try await database.schema("users").delete()
     }
 }

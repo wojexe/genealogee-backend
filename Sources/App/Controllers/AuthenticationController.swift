@@ -16,7 +16,7 @@ struct AuthenticationController: RouteCollection {
     }
     
     func register(req: Request) throws -> EventLoopFuture<HTTPResponseStatus> {
-        try User.Register.validate(content: req)
+        try User.validate(content: req)
         
         let registerRequest = try req.content.decode(User.Register.self)
         

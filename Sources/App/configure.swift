@@ -9,8 +9,23 @@ public func configure(_ app: Application) async throws {
     
     app.databases.middleware.use(UserMiddleware())
     
-    app.migrations.add(User.CreateUser())
+    app.migrations.add(CreateUser())
+    app.migrations.add(CreatePerson())
+    
     app.migrations.add(SessionRecord.migration)
+    
+    // json date decoder
+    
+    let jsDateFormatter = DateFormatter()
+    jsDateFormatter.calendar = Calendar(identifier: .iso8601)
+    jsDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .formatted(jsDateFormatter)
+    
+    ContentConfiguration.global.use(decoder: decoder, for: .json)
+    
+    // json fin
     
     // Add CORS middleware for prod
     app.middleware.use(app.sessions.middleware)
