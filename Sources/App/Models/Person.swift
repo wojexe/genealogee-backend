@@ -27,8 +27,9 @@ final class Person: Model, Content {
     
     init() { }
     
-    init(id: UUID? = nil, givenNames: String, familyName: String, birthName: String? = nil, date_of: Dates) {
+    init(id: UUID? = nil, creatorID: UUID, givenNames: String, familyName: String, birthName: String? = nil, date_of: Dates) {
         self.id = id
+        self.$creator.id = creatorID
         self.givenNames = givenNames
         self.familyName = familyName
         self.birthName = birthName

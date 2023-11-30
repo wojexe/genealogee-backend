@@ -4,6 +4,7 @@ struct CreatePerson: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema("people")
             .id()
+            .field("creator_id", .uuid, .required, .references("users", "id"))
             .field("given_names", .string, .required)
             .field("family_name", .string, .required)
             .field("birth_name", .string)

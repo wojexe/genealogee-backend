@@ -2,8 +2,9 @@ import Vapor
 import Fluent
 
 extension Person {
-    convenience init(from createRequest: Create) throws {
-        self.init(givenNames: createRequest.givenNames,
+    convenience init(from createRequest: Create, creatorID: UUID) throws {
+        self.init(creatorID: creatorID,
+                  givenNames: createRequest.givenNames,
                   familyName: createRequest.familyName,
                   birthName: createRequest.birthName,
                   date_of: createRequest.date_of)

@@ -10,19 +10,32 @@ struct PersonController: RouteCollection {
         people.get("all", use: all)
     }
     
-    // TODO: better error handling :)
     func create(req: Request) async throws -> HTTPStatus {
         try Person.validate(content: req)
         
         guard let personData = try? await Person.Create.decodeRequest(req) else {
-            throw Abort(.badRequest)
+            throw PersonError(.couldNotParse)
         }
         
-        guard let person = try? Person(from: personData) else {
-            throw Abort(.internalServerError)
+        let user = try! req.auth.require(User.self) // Already authenticated
+        
+        guard let person = try? Person(from: personData, creatorID: user.id!) else {
+            throw PersonError(.couldNotInstantiate)
         }
         
-        guard let _ = try? await person.save(on: req.db) else {
+        do {
+            try await person.save(on: req.db)
+        } catch let dbError as DatabaseError {
+            let logLevel = dbError.isConstraintFailure
+                               ? Logger.Level.warning
+                               : Logger.Level.error
+            
+            req.logger.log(level: logLevel, "\(dbError)")
+            
+            throw PersonError(.couldNotSave)
+        } catch let err {
+            req.logger.report(error: err)
+            
             throw Abort(.internalServerError)
         }
         
@@ -30,6 +43,10 @@ struct PersonController: RouteCollection {
     }
     
     func all(req: Request) async throws -> [Person] {
-        return try await Person.query(on: req.db).all()
+        let user = try! req.auth.require(User.self)
+        
+        return try await Person.query(on: req.db)
+            .filter(\Person.$creator.$id == user.id!)
+            .all()
     }
 }
