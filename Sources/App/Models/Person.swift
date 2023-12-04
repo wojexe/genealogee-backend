@@ -10,6 +10,9 @@ final class Person: Model, Content {
     @Parent(key: "creator_id")
     var creator: User
     
+    @OptionalParent(key: "parent_family_id")
+    var parentFamily: Family?
+    
     @Field(key: "given_names")
     var givenNames: String
     

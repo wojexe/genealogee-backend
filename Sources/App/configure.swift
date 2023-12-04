@@ -9,8 +9,7 @@ public func configure(_ app: Application) async throws {
     
     app.databases.middleware.use(UserMiddleware())
     
-    app.migrations.add(CreateUser())
-    app.migrations.add(CreatePerson())
+    app.migrations.add(CreateMigrations.all())
     
     app.migrations.add(SessionRecord.migration)
     
@@ -36,9 +35,11 @@ public func configure(_ app: Application) async throws {
     switch app.environment {
     case .development:
         app.sessions.use(.memory)
+        app.logger.logLevel = .debug
         
     default:
         app.sessions.use(.fluent)
+        app.logger.logLevel = .info
     }
     
     try routes(app)

@@ -8,11 +8,13 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.83.1"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.88.0"),
         // 🗄 An ORM for SQL and NoSQL databases.
         .package(url: "https://github.com/vapor/fluent.git", from: "4.8.0"),
         // 🪶 Fluent driver for SQLite.
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
+        // 🥞 A powerful SQL query builder.
+        .package(url: "https://github.com/vapor/sql-kit.git", from: "3.0.0"),
     ],
     targets: [
         .executableTarget(
@@ -21,6 +23,7 @@ let package = Package(
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
                 .product(name: "Vapor", package: "vapor"),
+                .product(name: "SQLKit", package: "sql-kit"),
             ]
         ),
         .testTarget(name: "AppTests", dependencies: [
@@ -31,6 +34,7 @@ let package = Package(
             .product(name: "Vapor", package: "vapor"),
             .product(name: "Fluent", package: "Fluent"),
             .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
+            .product(name: "SQLKit", package: "sql-kit"),
         ])
     ]
 )
