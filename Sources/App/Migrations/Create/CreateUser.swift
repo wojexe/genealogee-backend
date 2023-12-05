@@ -13,7 +13,7 @@ struct CreateUser: AsyncMigration {
             .unique(on: "email")
             .create()
     }
-    
+
     func revert(on database: Database) async throws {
         try await database.schema("users").delete()
     }

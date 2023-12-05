@@ -7,7 +7,7 @@ struct CreateTree: AsyncMigration {
             .field("name", .custom("varchar(64)"), .required)
             .create()
     }
-    
+
     func revert(on database: Database) async throws {
         try await database.schema("trees").delete()
     }

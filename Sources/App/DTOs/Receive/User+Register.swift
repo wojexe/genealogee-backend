@@ -7,7 +7,7 @@ extension User {
                   name: registerRequest.name,
                   passwordHash: hash)
     }
-    
+
     struct Register: Content {
         var email: String
         var name: String

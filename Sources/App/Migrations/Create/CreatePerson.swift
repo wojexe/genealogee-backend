@@ -16,7 +16,7 @@ struct CreatePerson: AsyncMigration {
             .field("deleted_at", .datetime)
             .create()
     }
-    
+
     func revert(on database: Database) async throws {
         try await database.schema("people").delete()
     }

@@ -1,7 +1,7 @@
 import Fluent
 
 final class CreateMigrations {
-    static func all() -> Array<AsyncMigration> {
+    static func all() -> [AsyncMigration] {
         return [
             CreateUser(),
             CreatePerson(),

@@ -14,7 +14,7 @@ extension AuthenticationError: AbortError {
             return .badRequest
         }
     }
-    
+
     var reason: String {
         switch self {
         case .emailAlreadyExists:
@@ -23,7 +23,7 @@ extension AuthenticationError: AbortError {
             return "The email or password is incorrect"
         }
     }
-    
+
     var identifier: String {
         switch self {
         case .emailAlreadyExists:

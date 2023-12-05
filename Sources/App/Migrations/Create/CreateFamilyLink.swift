@@ -9,7 +9,7 @@ struct CreateFamilyLink: AsyncMigration {
             .constraint(.custom("PRIMARY KEY (family_id, person_id)"))
             .create()
     }
-    
+
     func revert(on database: Database) async throws {
         try await database.schema("family_links").delete()
     }

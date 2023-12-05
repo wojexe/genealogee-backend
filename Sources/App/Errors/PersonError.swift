@@ -7,10 +7,10 @@ struct PersonError: AppError {
         case couldNotInstantiate
         case couldNotSave
     }
-    
+
     var value: Value
     var source: ErrorSource?
-    
+
     var status: HTTPResponseStatus {
         switch value {
         case .couldNotParse:
@@ -21,7 +21,7 @@ struct PersonError: AppError {
             return .internalServerError
         }
     }
-    
+
     var reason: String {
         switch value {
         case .couldNotParse:
@@ -32,7 +32,7 @@ struct PersonError: AppError {
             return "An error occured"
         }
     }
-    
+
     var identifier: String {
         switch value {
         case .couldNotParse:
@@ -43,7 +43,7 @@ struct PersonError: AppError {
             return "could_not_save"
         }
     }
-    
+
     init(
         _ value: Value,
         file: String = #file,
