@@ -7,27 +7,19 @@ struct PersonController: RouteCollection {
         person.post("create", use: create)
 
         routes.get("people", use: all)
-
-        // add child
-        // add partner
-        // add to new family
     }
 
     func create(req: Request) async throws -> HTTPStatus {
+        let user = try req.auth.require(User.self)
+
         try Person.validate(content: req)
 
         guard let personData = try? await Person.Create.decodeRequest(req) else {
             throw PersonError(.couldNotParse)
         }
 
-        let user = req.auth.get(User.self)!
-
-        guard let person = try? Person(from: personData, creatorID: user.id!) else {
-            throw PersonError(.couldNotInstantiate)
-        }
-
         do {
-            try await person.save(on: req.db)
+            try await PersonOperations.CreatePerson(input: personData, for: user, on: req.db)
         } catch let dbError as DatabaseError {
             req.logger.log(level: .warning, "\(dbError)")
 

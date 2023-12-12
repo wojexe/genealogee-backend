@@ -15,4 +15,11 @@ final class Family: Model, Content {
 
     @Siblings(through: ChildLink.self, from: \.$id.$family, to: \.$id.$person)
     var children: [Person]
+
+    init() {}
+
+    init(id: UUID? = nil, treeID: UUID) {
+        self.id = id
+        self.$tree.id = treeID
+    }
 }

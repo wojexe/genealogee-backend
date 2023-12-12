@@ -7,7 +7,7 @@ enum CreateMigrations {
             CreatePerson(),
             CreateTree(),
             CreateFamily(),
-            CreateFamilyLink(),
+            CreateParentLink(),
             CreateChildLink(),
         ]
     }

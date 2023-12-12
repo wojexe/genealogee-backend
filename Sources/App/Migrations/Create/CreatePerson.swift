@@ -5,6 +5,7 @@ struct CreatePerson: AsyncMigration {
         try await database.schema("people")
             .id()
             .field("creator_id", .uuid, .required, .references("users", "id"))
+            .field("tree_id", .uuid, .required, .references("trees", "id"))
             .field("parent_family_id", .uuid, .references("families", "id"))
             .field("given_names", .custom("varchar(128)"), .required)
             .field("family_name", .custom("varchar(128)"), .required)

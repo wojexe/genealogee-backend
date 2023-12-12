@@ -10,6 +10,9 @@ final class Person: Model, Content {
     @Parent(key: "creator_id")
     var creator: User
 
+    @Parent(key: "tree_id")
+    var tree: Tree
+
     @OptionalParent(key: "parent_family_id")
     var parentFamily: Family?
 
@@ -32,6 +35,7 @@ final class Person: Model, Content {
 
     init(id: UUID? = nil,
          creatorID: UUID,
+         treeID: UUID,
          givenNames: String,
          familyName: String,
          birthName: String? = nil,
@@ -39,6 +43,7 @@ final class Person: Model, Content {
     {
         self.id = id
         $creator.id = creatorID
+        $tree.id = treeID
         self.givenNames = givenNames
         self.familyName = familyName
         self.birthName = birthName
@@ -83,7 +88,7 @@ extension Person: Validatable {
         val.add("familyName", as: String.self, is: .count(...128))
         val.add("birthName", as: String?.self, is: .nil || .count(...128), required: false)
 
-        val.add("date_of") { val in
+        val.add("dateOf") { val in
             val.add("birth", as: Date?.self, is: .valid, required: false)
             val.add("birthCustom", as: String?.self, is: .nil || .count(...128), required: false)
             val.add("death", as: Date?.self, is: .valid, required: false)

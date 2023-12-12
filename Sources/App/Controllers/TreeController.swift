@@ -13,16 +13,17 @@ struct TreeController: RouteCollection {
         tree.get(":id", use: byID)
     }
 
-    func create(req: Request) async throws -> HTTPStatus {
+    func create(req: Request) async throws -> Tree.Created {
         try Tree.validate(content: req)
 
         guard let treeData = try? await Tree.Create.decodeRequest(req) else {
             throw Abort(.internalServerError)
         }
 
-        let user = req.auth.get(User.self)!
+        let user = try req.auth.require(User.self)
+        let userID = try user.requireID()
 
-        guard let tree = try? Tree(from: treeData, creatorID: user.id!) else {
+        guard let tree = try? Tree(from: treeData, creatorID: userID) else {
             throw Abort(.internalServerError)
         }
 
@@ -38,7 +39,7 @@ struct TreeController: RouteCollection {
             throw Abort(.internalServerError)
         }
 
-        return .created
+        return try Tree.Created(tree)
     }
 
     func all(req: Request) async throws -> [Tree] {
@@ -46,17 +47,25 @@ struct TreeController: RouteCollection {
 
         return try await Tree.query(on: req.db)
             .filter(\Tree.$creator.$id == user.id!)
-            .with(\.$families)
+            .with(\.$people)
+            .with(\.$families) { family in
+                family
+                    .with(\.$children)
+                    .with(\.$parents)
+            }
             .all()
     }
 
     func byID(req: Request) async throws -> Tree {
-        let user = req.auth.get(User.self)!
-        let treeID = req.parameters.get("id", as: UUID.self)
+        let user = try req.auth.require(User.self)
+
+        guard let treeID = req.parameters.get("id", as: UUID.self) else {
+            throw Abort(.imATeapot)
+        }
 
         guard let tree = try await Tree.query(on: req.db)
             .filter(\Tree.$creator.$id == user.id!)
-            .filter(\Tree.$id == treeID!)
+            .filter(\Tree.$id == treeID)
             .first()
         else {
             throw Abort(.notFound)

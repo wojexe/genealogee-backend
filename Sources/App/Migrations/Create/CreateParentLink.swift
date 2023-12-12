@@ -1,8 +1,8 @@
 import Fluent
 
-struct CreateFamilyLink: AsyncMigration {
+struct CreateParentLink: AsyncMigration {
     func prepare(on database: Database) async throws {
-        try await database.schema("family_links")
+        try await database.schema("parent_links")
             .field("family_id", .uuid, .required)
             .field("person_id", .uuid, .required)
             .unique(on: "family_id", "person_id")
@@ -11,6 +11,6 @@ struct CreateFamilyLink: AsyncMigration {
     }
 
     func revert(on database: Database) async throws {
-        try await database.schema("family_links").delete()
+        try await database.schema("parent_links").delete()
     }
 }
