@@ -1,5 +1,5 @@
-import Vapor
 import Fluent
+import Vapor
 
 extension Person {
     convenience init(from createRequest: Create, creatorID: UUID) throws {

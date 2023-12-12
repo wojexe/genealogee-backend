@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "genealogy_backend",
     platforms: [
-       .macOS(.v13)
+        .macOS(.v13),
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
@@ -16,7 +16,7 @@ let package = Package(
         // 🥞 A powerful SQL query builder.
         .package(url: "https://github.com/vapor/sql-kit.git", from: "3.0.0"),
         // Linting
-        .package(url: "https://github.com/realm/SwiftLint", from: "0.54.0")
+        // .package(url: "https://github.com/realm/SwiftLint.git", from: "0.54.0")
     ],
     targets: [
         .executableTarget(
@@ -26,8 +26,8 @@ let package = Package(
                 .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "SQLKit", package: "sql-kit"),
-            ],
-            plugins: [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
+            ]
+            // ,plugins: [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
         ),
         .testTarget(name: "AppTests", dependencies: [
             .target(name: "App"),
@@ -38,6 +38,6 @@ let package = Package(
             .product(name: "Fluent", package: "Fluent"),
             .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
             .product(name: "SQLKit", package: "sql-kit"),
-        ])
+        ]),
     ]
 )

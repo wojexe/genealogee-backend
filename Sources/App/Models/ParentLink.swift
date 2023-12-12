@@ -7,9 +7,9 @@ final class ParentLink: Model {
     @CompositeID
     var id: FamilyAndPerson<ParentLink>?
 
-    init() { }
+    init() {}
 
     init(familyID: UUID, personID: UUID) {
-        self.id = .init(familyID: familyID, personID: personID)
+        id = .init(familyID: familyID, personID: personID)
     }
 }

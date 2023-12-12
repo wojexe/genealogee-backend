@@ -9,7 +9,7 @@ struct AuthenticationController: RouteCollection {
             auth.grouped([User.credentialsAuthenticator(), // Form
                           User.authenticator(), // Authorization: Basic <login:password>
                           User.guardMiddleware()])
-            .post("login", use: login)
+                .post("login", use: login)
 
             auth.get("me", use: getCurrentUser)
         }

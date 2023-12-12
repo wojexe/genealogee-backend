@@ -1,5 +1,5 @@
-import Vapor
 import Fluent
+import Vapor
 
 extension Tree {
     convenience init(from req: Create, creatorID: UUID) throws {

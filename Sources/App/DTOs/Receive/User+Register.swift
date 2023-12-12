@@ -1,5 +1,5 @@
-import Vapor
 import Fluent
+import Vapor
 
 extension User {
     convenience init(from registerRequest: Register, hash: String) {

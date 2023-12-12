@@ -1,3 +1,3 @@
 import Vapor
 
-protocol AppError: AbortError, DebuggableError { }
+protocol AppError: AbortError, DebuggableError {}

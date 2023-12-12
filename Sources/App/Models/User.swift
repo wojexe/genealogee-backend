@@ -31,7 +31,7 @@ final class User: Model, Content {
     @Timestamp(key: "deleted_at", on: .delete)
     var deletedAt: Date?
 
-    init() { }
+    init() {}
 
     init(id: UUID? = nil, email: String, name: String, passwordHash: String) {
         self.id = id
@@ -46,13 +46,13 @@ extension User: ModelAuthenticatable {
     static var passwordHashKey = \User.$passwordHash
 
     func verify(password: String) throws -> Bool {
-        return try Bcrypt.verify(password, created: self.passwordHash)
+        try Bcrypt.verify(password, created: passwordHash)
     }
 }
 
-extension User: ModelSessionAuthenticatable { }
+extension User: ModelSessionAuthenticatable {}
 
-extension User: ModelCredentialsAuthenticatable { }
+extension User: ModelCredentialsAuthenticatable {}
 
 extension User: Validatable {
     static func validations(_ validations: inout Validations) {
@@ -66,6 +66,6 @@ extension User: Validatable {
 
         validations.add("password",
                         as: String.self,
-                        is: .count(8...1024))
+                        is: .count(8 ... 1024))
     }
 }

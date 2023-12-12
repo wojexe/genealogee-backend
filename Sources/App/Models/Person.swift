@@ -28,16 +28,17 @@ final class Person: Model, Content {
     @Timestamp(key: "deleted_at", on: .delete)
     var deletedAt: Date?
 
-    init() { }
+    init() {}
 
     init(id: UUID? = nil,
          creatorID: UUID,
          givenNames: String,
          familyName: String,
          birthName: String? = nil,
-         dateOf: Dates) {
+         dateOf: Dates)
+    {
         self.id = id
-        self.$creator.id = creatorID
+        $creator.id = creatorID
         self.givenNames = givenNames
         self.familyName = familyName
         self.birthName = birthName
@@ -58,7 +59,7 @@ final class Dates: Fields, Content {
     @OptionalField(key: "death_custom")
     var deathCustom: String?
 
-    init() { }
+    init() {}
 
     init(birth: Date?, birthCustom: String? = nil, death: Date?, deathCustom: String? = nil) {
         self.birth = birth
@@ -68,25 +69,25 @@ final class Dates: Fields, Content {
     }
 
     func birthString() -> String? {
-        self.birth?.formatted() ?? self.birthCustom
+        birth?.formatted() ?? birthCustom
     }
 
     func deathString() -> String? {
-        self.death?.formatted() ?? self.deathCustom
+        death?.formatted() ?? deathCustom
     }
 }
 
 extension Person: Validatable {
-    static func validations(_ v: inout Validations) {
-        v.add("givenNames", as: String.self, is: .count(...128))
-        v.add("familyName", as: String.self, is: .count(...128))
-        v.add("birthName", as: String?.self, is: .nil || .count(...128), required: false)
+    static func validations(_ val: inout Validations) {
+        val.add("givenNames", as: String.self, is: .count(...128))
+        val.add("familyName", as: String.self, is: .count(...128))
+        val.add("birthName", as: String?.self, is: .nil || .count(...128), required: false)
 
-        v.add("date_of") { d in
-            d.add("birth", as: Date?.self, is: .valid, required: false)
-            d.add("birthCustom", as: String?.self, is: .nil || .count(...128), required: false)
-            d.add("death", as: Date?.self, is: .valid, required: false)
-            d.add("deathCustom", as: String?.self, is: .nil || .count(...128), required: false)
+        val.add("date_of") { val in
+            val.add("birth", as: Date?.self, is: .valid, required: false)
+            val.add("birthCustom", as: String?.self, is: .nil || .count(...128), required: false)
+            val.add("death", as: Date?.self, is: .valid, required: false)
+            val.add("deathCustom", as: String?.self, is: .nil || .count(...128), required: false)
         }
     }
 }

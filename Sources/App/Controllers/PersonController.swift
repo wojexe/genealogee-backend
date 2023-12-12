@@ -7,6 +7,10 @@ struct PersonController: RouteCollection {
         person.post("create", use: create)
 
         routes.get("people", use: all)
+
+        // add child
+        // add partner
+        // add to new family
     }
 
     func create(req: Request) async throws -> HTTPStatus {

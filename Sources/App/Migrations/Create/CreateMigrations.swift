@@ -1,14 +1,14 @@
 import Fluent
 
-final class CreateMigrations {
+enum CreateMigrations {
     static func all() -> [AsyncMigration] {
-        return [
+        [
             CreateUser(),
             CreatePerson(),
             CreateTree(),
             CreateFamily(),
             CreateFamilyLink(),
-            CreateChildLink()
+            CreateChildLink(),
         ]
     }
 }

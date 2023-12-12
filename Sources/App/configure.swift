@@ -1,4 +1,3 @@
-import NIOSSL
 import Fluent
 import FluentSQLiteDriver
 import Vapor

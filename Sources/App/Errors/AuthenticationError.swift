@@ -9,27 +9,27 @@ extension AuthenticationError: AbortError {
     var status: HTTPResponseStatus {
         switch self {
         case .emailAlreadyExists:
-            return .badRequest
+            .badRequest
         case .invalidEmailOrPassword:
-            return .badRequest
+            .badRequest
         }
     }
 
     var reason: String {
         switch self {
         case .emailAlreadyExists:
-            return "A user with that email already exists"
+            "A user with that email already exists"
         case .invalidEmailOrPassword:
-            return "The email or password is incorrect"
+            "The email or password is incorrect"
         }
     }
 
     var identifier: String {
         switch self {
         case .emailAlreadyExists:
-            return "email_already_exists"
+            "email_already_exists"
         case .invalidEmailOrPassword:
-            return "incorrect_email_or_password"
+            "incorrect_email_or_password"
         }
     }
 }

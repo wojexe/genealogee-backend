@@ -19,11 +19,11 @@ final class Tree: Model, Content {
     @Children(for: \.$tree)
     var families: [Family]
 
-    init() { }
+    init() {}
 
     init(id: UUID? = nil, creatorID: UUID, name: String, rootFamilyID: UUID? = nil, families: [Family] = []) {
         self.id = id
-        self.$creator.id = creatorID
+        $creator.id = creatorID
         self.name = name
         self.rootFamilyID = rootFamilyID
         self.families = families

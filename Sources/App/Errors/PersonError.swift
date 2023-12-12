@@ -1,5 +1,5 @@
-import Vapor
 import Fluent
+import Vapor
 
 struct PersonError: AppError {
     enum Value {
@@ -14,33 +14,33 @@ struct PersonError: AppError {
     var status: HTTPResponseStatus {
         switch value {
         case .couldNotParse:
-            return .badRequest
+            .badRequest
         case .couldNotInstantiate:
-            return .internalServerError
+            .internalServerError
         case .couldNotSave:
-            return .internalServerError
+            .internalServerError
         }
     }
 
     var reason: String {
         switch value {
         case .couldNotParse:
-            return "Could not parse provided Person"
+            "Could not parse provided Person"
         case .couldNotInstantiate:
-            return "An error occured"
+            "An error occured"
         case .couldNotSave:
-            return "An error occured"
+            "An error occured"
         }
     }
 
     var identifier: String {
         switch value {
         case .couldNotParse:
-            return "could_not_parse"
+            "could_not_parse"
         case .couldNotInstantiate:
-            return "could_not_instantiate"
+            "could_not_instantiate"
         case .couldNotSave:
-            return "could_not_save"
+            "could_not_save"
         }
     }
 
@@ -52,7 +52,7 @@ struct PersonError: AppError {
         column: UInt = #column
     ) {
         self.value = value
-        self.source = .init(
+        source = .init(
             file: file,
             function: function,
             line: line,
