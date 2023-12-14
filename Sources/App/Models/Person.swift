@@ -13,9 +13,6 @@ final class Person: Model, Content {
     @Parent(key: "tree_id")
     var tree: Tree
 
-    @OptionalParent(key: "parent_family_id")
-    var parentFamily: Family?
-
     @Field(key: "given_names")
     var givenNames: String
 
@@ -27,6 +24,16 @@ final class Person: Model, Content {
 
     @Group(key: "date_of")
     var dateOf: Dates
+
+    /// The `family` field is a `[Family]`, since we might allow to
+    /// add the same person multiple times in the tree.
+    @Siblings(through: ParentLink.self, from: \.$id.$person, to: \.$id.$family)
+    var family: [Family]
+
+    /// The `parentFamily` field is a `[Family]`, since we might allow to
+    /// add the same person multiple times in the tree.
+    @Siblings(through: ChildLink.self, from: \.$id.$person, to: \.$id.$family)
+    var parentFamily: [Family]
 
     @Timestamp(key: "deleted_at", on: .delete)
     var deletedAt: Date?
@@ -49,6 +56,9 @@ final class Person: Model, Content {
         self.birthName = birthName
         self.dateOf = dateOf
     }
+
+    /// Delete the person along with all of the referencing entities (families, thus descendants)
+    func nuke(on db: Database) async throws {}
 }
 
 final class Dates: Fields, Content {
@@ -84,6 +94,7 @@ final class Dates: Fields, Content {
 
 extension Person: Validatable {
     static func validations(_ val: inout Validations) {
+        val.add("treeID", as: UUID.self, is: .valid)
         val.add("givenNames", as: String.self, is: .count(...128))
         val.add("familyName", as: String.self, is: .count(...128))
         val.add("birthName", as: String?.self, is: .nil || .count(...128), required: false)

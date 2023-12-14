@@ -16,7 +16,7 @@ extension PersonOperations {
             try await person.save(on: db)
             let personID = try person.requireID()
 
-            if try await tree.$people.get(on: db).isEmpty {
+            if try await tree.$families.get(on: db).isEmpty {
                 let family = Family(treeID: treeID)
                 try await family.save(on: db)
 

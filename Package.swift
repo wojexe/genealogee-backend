@@ -15,8 +15,6 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
         // 🥞 A powerful SQL query builder.
         .package(url: "https://github.com/vapor/sql-kit.git", from: "3.0.0"),
-        // Linting
-        // .package(url: "https://github.com/realm/SwiftLint.git", from: "0.54.0")
     ],
     targets: [
         .executableTarget(
@@ -27,7 +25,6 @@ let package = Package(
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "SQLKit", package: "sql-kit"),
             ]
-            // ,plugins: [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
         ),
         .testTarget(name: "AppTests", dependencies: [
             .target(name: "App"),
