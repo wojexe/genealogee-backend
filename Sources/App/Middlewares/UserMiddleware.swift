@@ -1,9 +1,9 @@
 import Fluent
 
-struct UserMiddleware: ModelMiddleware {
-    func create(model: User, on db: Database, next: AnyModelResponder) -> EventLoopFuture<Void> {
+struct UserMiddleware: AsyncModelMiddleware {
+    func create(model: User, on db: Database, next: AnyAsyncModelResponder) async throws {
         model.email = model.email.lowercased()
 
-        return next.create(model, on: db)
+        try await next.create(model, on: db)
     }
 }
