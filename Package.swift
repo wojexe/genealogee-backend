@@ -15,6 +15,8 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
         // 🥞 A powerful SQL query builder.
         .package(url: "https://github.com/vapor/sql-kit.git", from: "3.0.0"),
+        // Fake data generator for mocks
+        .package(url: "https://github.com/vadymmarkov/Fakery", from: "5.0.0")
     ],
     targets: [
         .executableTarget(
@@ -35,6 +37,7 @@ let package = Package(
             .product(name: "Fluent", package: "Fluent"),
             .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
             .product(name: "SQLKit", package: "sql-kit"),
+            .product(name: "Fakery", package: "Fakery"),
         ]),
     ]
 )

@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get("ping") { _ async in
+    app.get("ping") { _ in
         "pong"
     }
 

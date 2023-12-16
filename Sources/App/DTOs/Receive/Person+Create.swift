@@ -17,5 +17,8 @@ extension Person {
         var familyName: String
         var birthName: String?
         var dateOf: Dates
+
+        var childOf: UUID?
+        var partnerOf: UUID?
     }
 }

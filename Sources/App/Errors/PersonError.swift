@@ -4,6 +4,7 @@ import Vapor
 struct PersonError: AppError {
     enum Value {
         case couldNotParse
+        case treeNotFound
         case couldNotInstantiate
         case couldNotSave
     }
@@ -14,6 +15,8 @@ struct PersonError: AppError {
     var status: HTTPResponseStatus {
         switch value {
         case .couldNotParse:
+            .badRequest
+        case .treeNotFound:
             .badRequest
         case .couldNotInstantiate:
             .internalServerError
@@ -26,6 +29,8 @@ struct PersonError: AppError {
         switch value {
         case .couldNotParse:
             "Could not parse provided Person"
+        case .treeNotFound:
+            "Provided treeID was not found"
         case .couldNotInstantiate:
             "An error occured"
         case .couldNotSave:
@@ -37,6 +42,8 @@ struct PersonError: AppError {
         switch value {
         case .couldNotParse:
             "could_not_parse"
+        case .treeNotFound:
+            "tree_not_found"
         case .couldNotInstantiate:
             "could_not_instantiate"
         case .couldNotSave:

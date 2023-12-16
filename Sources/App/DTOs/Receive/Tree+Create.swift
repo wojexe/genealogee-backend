@@ -4,8 +4,8 @@ import Vapor
 extension Tree {
     convenience init(from req: Create, creatorID: UUID) throws {
         self.init(creatorID: creatorID,
-                  name: req.name,
-                  rootFamilyID: req.rootFamilyID)
+                  rootFamilyID: req.rootFamilyID,
+                  name: req.name)
     }
 
     struct Create: Content {

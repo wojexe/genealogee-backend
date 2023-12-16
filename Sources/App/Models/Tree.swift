@@ -24,7 +24,11 @@ final class Tree: Model, Content {
 
     init() {}
 
-    init(id: UUID? = nil, creatorID: UUID, name: String, rootFamilyID: UUID? = nil) {
+    init(id: UUID? = nil,
+         creatorID: UUID,
+         rootFamilyID: UUID? = nil,
+         name: String)
+    {
         self.id = id
         $creator.id = creatorID
         self.name = name

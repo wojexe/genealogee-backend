@@ -1,10 +1,11 @@
 import Fluent
 import Vapor
 
-extension PersonOperations {
-    static func AddPartner(personID: UUID, partnerID: UUID, on db: Database) async throws {
+extension PeopleService {
+    @discardableResult
+    func addPartner(personID: UUID, partnerID: UUID) async throws -> Family.Created {
         let person = try await Person
-            .query(on: db)
+            .query(on: req.db)
             .filter(\.$id == personID)
             .with(\.$family)
             .first()!
@@ -15,6 +16,8 @@ extension PersonOperations {
 
         let familyID = try family.requireID()
 
-        try await FamilyOperations.AddParent(familyID: familyID, parentID: partnerID, on: db)
+        try await req.familiesService.addParent(familyID: familyID, parentID: partnerID)
+
+        return try await Family.Created(family, req.db)
     }
 }

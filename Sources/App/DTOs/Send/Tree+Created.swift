@@ -8,9 +8,9 @@ extension Tree {
         var rootFamilyID: UUID?
 
         init(_ tree: Tree) throws {
-            self.id = try tree.requireID()
-            self.name = tree.name
-            self.rootFamilyID = tree.rootFamilyID
+            id = try tree.requireID()
+            name = tree.name
+            rootFamilyID = tree.rootFamilyID
         }
     }
 }

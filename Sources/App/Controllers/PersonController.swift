@@ -17,7 +17,17 @@ struct PersonController: RouteCollection {
         routes.get("people", use: all) // Mostly for debugging, might be hidden behind a flag later on
     }
 
-    func partner(req: Request) async throws -> HTTPStatus {
+    func create(req: Request) async throws -> Person.Created {
+        try Person.validate(content: req)
+
+        guard let personData = try? await Person.Create.decodeRequest(req) else {
+            throw PersonError(.couldNotParse)
+        }
+
+        return try await req.peopleService.createPerson(from: personData)
+    }
+
+    func partner(req: Request) async throws -> Family.Created {
         guard let personID = req.parameters.get("personID", as: UUID.self) else {
             throw Abort(.badRequest, reason: "Provided Person ID is not a valid UUID.")
         }
@@ -26,12 +36,10 @@ struct PersonController: RouteCollection {
             throw Abort(.badRequest, reason: "Provided Partner ID is not a valid UUID.")
         }
 
-        try await PersonOperations.AddPartner(personID: personID, partnerID: partnerID, on: req.db)
-
-        return .notImplemented
+        return try await req.peopleService.addPartner(personID: personID, partnerID: partnerID)
     }
 
-    func child(req: Request) async throws -> HTTPStatus {
+    func child(req: Request) async throws -> Family.Created {
         guard let personID = req.parameters.get("personID", as: UUID.self) else {
             throw Abort(.badRequest, reason: "Provided Person ID is not a valid UUID.")
         }
@@ -40,9 +48,7 @@ struct PersonController: RouteCollection {
             throw Abort(.badRequest, reason: "Provided Child ID is not a valid UUID.")
         }
 
-        try await PersonOperations.AddChild(personID: personID, childID: childID, on: req.db)
-
-        return .notImplemented
+        return try await req.peopleService.addChild(personID: personID, childID: childID)
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
@@ -50,23 +56,9 @@ struct PersonController: RouteCollection {
             throw Abort(.badRequest, reason: "Provided ID is not a valid UUID.")
         }
 
-        try await PersonOperations.DeletePerson(personID, on: req.db)
+        try await req.peopleService.deletePerson(personID)
 
         return .ok
-    }
-
-    func create(req: Request) async throws -> HTTPStatus {
-        let user = try req.auth.require(User.self)
-
-        try Person.validate(content: req)
-
-        guard let personData = try? await Person.Create.decodeRequest(req) else {
-            throw PersonError(.couldNotParse)
-        }
-
-        try await PersonOperations.CreatePerson(input: personData, for: user, on: req.db)
-
-        return .created
     }
 
     func all(req: Request) async throws -> [Person] {

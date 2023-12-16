@@ -24,7 +24,7 @@ final class Family: Model, Content {
     }
 
     /// Delete people at the parent level and all children recursively
-    func nuke(on db: Database) async throws {
+    func nuke(on _: Database) async throws {
         // let parents = try await self.$parents.get(on: db)
         // let children = try await self.$children.get(on: db)
 
