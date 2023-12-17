@@ -41,5 +41,7 @@ public func configure(_ app: Application) async throws {
         app.logger.logLevel = .info
     }
 
+    app.trees.use { DatabaseTreeRepository(req: $0) }
+
     try routes(app)
 }

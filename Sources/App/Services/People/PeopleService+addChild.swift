@@ -3,8 +3,7 @@ import Vapor
 
 extension PeopleService {
     @discardableResult
-    func addChild(personID: UUID, childID: UUID) async throws -> Family.Created
-    {
+    func addChild(personID: UUID, childID: UUID) async throws -> Family.Created {
         guard let person = try await Person
             .query(on: req.db)
             .filter(\.$id == personID)

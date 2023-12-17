@@ -43,10 +43,10 @@ struct TreeController: RouteCollection {
     }
 
     func all(req: Request) async throws -> [Tree] {
-        let user = req.auth.get(User.self)!
-
-        return try await Tree.query(on: req.db)
-            .filter(\Tree.$creator.$id == user.id!)
+        try await req
+            .trees
+            .scoped(by: .currentUser)
+            .with(\.$creator)
             .with(\.$people)
             .with(\.$families) { family in
                 family
@@ -57,6 +57,8 @@ struct TreeController: RouteCollection {
     }
 
     func byID(req: Request) async throws -> Tree {
+        // load full tree
+
         let user = try req.auth.require(User.self)
 
         guard let treeID = req.parameters.get("id", as: UUID.self) else {
@@ -64,8 +66,8 @@ struct TreeController: RouteCollection {
         }
 
         guard let tree = try await Tree.query(on: req.db)
-            .filter(\Tree.$creator.$id == user.id!)
-            .filter(\Tree.$id == treeID)
+            .filter(\.$creator.$id == user.id!)
+            .filter(\.$id == treeID)
             .first()
         else {
             throw Abort(.notFound)

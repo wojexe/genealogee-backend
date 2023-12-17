@@ -65,7 +65,7 @@ struct PersonController: RouteCollection {
         let user = req.auth.get(User.self)!
 
         return try await Person.query(on: req.db)
-            .filter(\Person.$creator.$id == user.id!)
+            .filter(\.$creator.$id == user.id!)
             .all()
     }
 }

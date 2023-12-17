@@ -8,9 +8,9 @@ extension Family {
         var children: [UUID]
 
         init(_ family: Family, _ db: Database) async throws {
-            self.ID  = try family.requireID()
-            self.parents = try await family.$parents.get(on: db).map { try $0.requireID() }
-            self.children = try await family.$children.get(on: db).map { try $0.requireID() }
+            ID = try family.requireID()
+            parents = try await family.$parents.get(on: db).map { try $0.requireID() }
+            children = try await family.$children.get(on: db).map { try $0.requireID() }
         }
     }
 }

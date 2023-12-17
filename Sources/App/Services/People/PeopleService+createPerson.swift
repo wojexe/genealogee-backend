@@ -37,11 +37,11 @@ extension PeopleService {
 
         // TODO: do i really want this?
         if let parentID = data.childOf {
-            try await req.peopleService.addChild(personID: parentID, childID: try person.requireID())
+            try await req.peopleService.addChild(personID: parentID, childID: person.requireID())
         }
 
         if let partnerID = data.partnerOf {
-            try await req.peopleService.addPartner(personID: try person.requireID(), partnerID: partnerID)
+            try await req.peopleService.addPartner(personID: person.requireID(), partnerID: partnerID)
         }
 
         return try await Person.Created(person, req.db)

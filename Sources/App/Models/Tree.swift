@@ -22,6 +22,9 @@ final class Tree: Model, Content {
     @Children(for: \.$tree)
     var people: [Person]
 
+    @Children(for: \.$tree)
+    var snapshots: [TreeSnapshot]
+
     init() {}
 
     init(id: UUID? = nil,
@@ -33,6 +36,10 @@ final class Tree: Model, Content {
         $creator.id = creatorID
         self.name = name
         self.rootFamilyID = rootFamilyID
+    }
+
+    func snapshot(during req: Request) async throws {
+        try await req.treeService.snapshot(self)
     }
 }
 

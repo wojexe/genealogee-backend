@@ -14,15 +14,15 @@ extension Person {
         var dateOf: Dates
 
         init(_ person: Person, _ db: Database) async throws {
-            self.ID = try person.requireID()
-            self.creatorID = person.$creator.id
-            self.treeID = person.$tree.id
-            self.familyID = try await person.$family.get(on: db).first?.id
-            self.parentFamilyID = try await person.$parentFamily.get(on: db).first?.id
-            self.givenNames = person.givenNames
-            self.familyName = person.familyName
-            self.birthName = person.birthName
-            self.dateOf = person.dateOf
+            ID = try person.requireID()
+            creatorID = person.$creator.id
+            treeID = person.$tree.id
+            familyID = try await person.$family.get(on: db).first?.id
+            parentFamilyID = try await person.$parentFamily.get(on: db).first?.id
+            givenNames = person.givenNames
+            familyName = person.familyName
+            birthName = person.birthName
+            dateOf = person.dateOf
         }
     }
 }
