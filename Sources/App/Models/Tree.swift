@@ -46,6 +46,6 @@ final class Tree: Model, Content {
 extension Tree: Validatable {
     static func validations(_ d: inout Validations) {
         d.add("name", as: String.self, is: .count(...64))
-        d.add("rootFamily", as: UUID.self, required: false)
+        d.add("rootFamilyID", as: UUID.self, required: false)
     }
 }

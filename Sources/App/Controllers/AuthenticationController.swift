@@ -3,16 +3,21 @@ import Vapor
 
 struct AuthenticationController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        routes.group("auth") { auth in
-            auth.post("register", use: register)
+        let auth = routes.grouped("auth")
 
-            auth.grouped([User.credentialsAuthenticator(), // Form
-                          User.authenticator(), // Authorization: Basic <login:password>
-                          User.guardMiddleware()])
-                .post("login", use: login)
+        auth
+            .grouped([User.authenticator(), User.credentialsAuthenticator()])
+            .post("login", use: login)
 
-            auth.get("me", use: getCurrentUser)
-        }
+        auth.post("register", use: register)
+
+        auth.get("me", use: getCurrentUser)
+    }
+
+    func login(req: Request) throws -> HTTPResponseStatus {
+        try req.auth.require(User.self)
+
+        return .ok
     }
 
     func register(req: Request) async throws -> HTTPResponseStatus {
@@ -39,12 +44,6 @@ struct AuthenticationController: RouteCollection {
         }
 
         return .created
-    }
-
-    func login(req: Request) throws -> HTTPResponseStatus {
-        try req.auth.require(User.self)
-
-        return .ok
     }
 
     func getCurrentUser(req: Request) throws -> String {

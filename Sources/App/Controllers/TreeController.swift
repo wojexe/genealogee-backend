@@ -16,30 +16,9 @@ struct TreeController: RouteCollection {
     func create(req: Request) async throws -> Tree.Created {
         try Tree.validate(content: req)
 
-        guard let treeData = try? await Tree.Create.decodeRequest(req) else {
-            throw Abort(.internalServerError)
-        }
+        let treeData = try await Tree.Create.decodeRequest(req)
 
-        let user = try req.auth.require(User.self)
-        let userID = try user.requireID()
-
-        guard let tree = try? Tree(from: treeData, creatorID: userID) else {
-            throw Abort(.internalServerError)
-        }
-
-        do {
-            try await tree.save(on: req.db)
-        } catch let dbError as DatabaseError {
-            req.logger.log(level: .warning, "\(dbError)")
-
-            throw PersonError(.couldNotSave)
-        } catch let err {
-            req.logger.report(error: err)
-
-            throw Abort(.internalServerError)
-        }
-
-        return try Tree.Created(tree)
+        return try await req.treeService.create(from: treeData)
     }
 
     func all(req: Request) async throws -> [Tree] {
@@ -56,23 +35,22 @@ struct TreeController: RouteCollection {
             .all()
     }
 
+    // TODO: Error handling (maybe even in the repo itself)
     func byID(req: Request) async throws -> Tree {
-        // load full tree
-
-        let user = try req.auth.require(User.self)
-
         guard let treeID = req.parameters.get("id", as: UUID.self) else {
-            throw Abort(.imATeapot)
+            throw Abort(.badRequest)
         }
 
-        guard let tree = try await Tree.query(on: req.db)
-            .filter(\.$creator.$id == user.id!)
-            .filter(\.$id == treeID)
-            .first()
-        else {
-            throw Abort(.notFound)
+        struct Params: Content {
+            let entire: Bool?
         }
 
-        return tree
+        guard let entire = try req.query.get(Params.self).entire else {
+            throw Abort(.badRequest)
+        }
+
+        return try await req
+            .trees
+            .get(id: treeID, entire: entire)
     }
 }

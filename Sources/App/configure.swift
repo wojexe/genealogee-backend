@@ -26,8 +26,9 @@ public func configure(_ app: Application) async throws {
     // json fin
 
     // Add CORS middleware for prod
+
     app.middleware.use(app.sessions.middleware)
-    app.middleware.use(User.sessionAuthenticator()) // Session cookies
+    app.middleware.use(User.sessionAuthenticator())
 
     app.passwords.use(.bcrypt)
 

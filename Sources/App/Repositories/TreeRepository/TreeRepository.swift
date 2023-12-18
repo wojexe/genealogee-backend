@@ -8,13 +8,12 @@ enum TreeRepositoryScope {
 }
 
 protocol TreeRepository {
-    // var db: Database { get }
     var req: Request { get }
 
-    // init(db: Database)
     init(req: Request)
 
     func scoped(by scope: TreeRepositoryScope) throws -> QueryBuilder<Tree>
+    func get(id: UUID, entire recursive: Bool) async throws -> Tree
 }
 
 struct TreeRepositoryFactory {
