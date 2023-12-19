@@ -9,7 +9,7 @@ public func configure(_ app: Application) async throws {
 
     app.databases.middleware.use(UserMiddleware())
 
-    app.migrations.add(InitialMigrations.all(app.environment))
+    app.migrations.add(CreateMigrations.all())
 
     app.migrations.add(SessionRecord.migration)
 

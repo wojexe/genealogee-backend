@@ -4,11 +4,12 @@ enum CreateMigrations {
     static func all() -> [AsyncMigration] {
         [
             CreateUser(),
-            CreatePerson(),
             CreateTree(),
+            CreatePerson(),
             CreateFamily(),
             CreateParentLink(),
             CreateChildLink(),
+            AddRootFamilyId(),
         ]
     }
 }

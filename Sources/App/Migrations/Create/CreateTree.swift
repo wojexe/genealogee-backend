@@ -4,9 +4,8 @@ struct CreateTree: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database.schema("trees")
             .id()
-            .field("creator_id", .uuid, .required)
+            .field("creator_id", .uuid, .required, .references("users", "id", onDelete: .cascade))
             .field("name", .custom("varchar(64)"), .required)
-            .field("root_family_id", .uuid)
             .create()
     }
 
