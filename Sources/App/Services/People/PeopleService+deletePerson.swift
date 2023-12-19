@@ -2,6 +2,7 @@ import Fluent
 import Vapor
 
 extension PeopleService {
+    // TODO: scope for user
     func deletePerson(_ id: UUID) async throws {
         let person = try await Person
             .query(on: req.db)

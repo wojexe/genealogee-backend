@@ -1,14 +1,15 @@
 import Fluent
+import FluentPostgresDriver
 import FluentSQLiteDriver
 import Vapor
 
 // configures your application
 public func configure(_ app: Application) async throws {
-    app.databases.use(DatabaseConfigurationFactory.sqlite(.file("db.sqlite")), as: .sqlite)
+    try configureDatabase(app)
 
     app.databases.middleware.use(UserMiddleware())
 
-    app.migrations.add(CreateMigrations.all())
+    app.migrations.add(InitialMigrations.all(app.environment))
 
     app.migrations.add(SessionRecord.migration)
 
@@ -33,7 +34,8 @@ public func configure(_ app: Application) async throws {
     app.passwords.use(.bcrypt)
 
     switch app.environment {
-    case .development:
+    case .development: fallthrough
+    case .testing:
         app.sessions.use(.memory)
         app.logger.logLevel = .debug
 
@@ -45,4 +47,17 @@ public func configure(_ app: Application) async throws {
     app.trees.use { DatabaseTreeRepository(req: $0) }
 
     try routes(app)
+}
+
+private func configureDatabase(_ app: Application) throws {
+    let postgresURL = Environment.get("POSTGRES_URL")
+
+    switch app.environment {
+    case .production:
+        try app.databases.use(.postgres(url: postgresURL!), as: .psql)
+    case .testing:
+        app.databases.use(.sqlite(.memory), as: .sqlite)
+    default:
+        app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+    }
 }

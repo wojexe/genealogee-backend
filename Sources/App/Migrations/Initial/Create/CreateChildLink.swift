@@ -11,6 +11,7 @@ struct CreateChildLink: AsyncMigration {
     }
 
     func revert(on database: Database) async throws {
-        try await database.schema("child_links").delete()
+        try await database.schema("child_links")
+            .delete()
     }
 }

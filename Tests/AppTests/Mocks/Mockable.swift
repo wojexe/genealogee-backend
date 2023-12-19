@@ -1,7 +1,7 @@
-import Fluent
+// import Fluent
 
-protocol Mockable {
-    associatedtype T
+// protocol Mockable {
+//     associatedtype T
 
-    static func mock() -> T
-}
+//     static func mock() -> T
+// }

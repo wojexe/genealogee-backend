@@ -58,7 +58,9 @@ final class Person: Model, Content {
     }
 
     /// Delete the person along with all of the referencing entities (families, thus descendants)
-    func nuke(on _: Database) async throws {}
+    func nuke(on _: Database) async throws {
+        // TODO
+    }
 }
 
 final class Dates: Fields, Content {

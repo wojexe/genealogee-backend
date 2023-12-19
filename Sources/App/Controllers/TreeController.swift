@@ -37,17 +37,13 @@ struct TreeController: RouteCollection {
 
     // TODO: Error handling (maybe even in the repo itself)
     func byID(req: Request) async throws -> Tree {
-        guard let treeID = req.parameters.get("id", as: UUID.self) else {
-            throw Abort(.badRequest)
-        }
+        let treeID = try req.parameters.require("id", as: UUID.self)
 
         struct Params: Content {
             let entire: Bool?
         }
 
-        guard let entire = try req.query.get(Params.self).entire else {
-            throw Abort(.badRequest)
-        }
+        let entire = try req.query.get(Params.self).entire ?? false
 
         return try await req
             .trees

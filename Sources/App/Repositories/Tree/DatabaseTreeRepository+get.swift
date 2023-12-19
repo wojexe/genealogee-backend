@@ -14,12 +14,16 @@ extension DatabaseTreeRepository {
             query.with(\.$people)
         }
 
-        return try await query.first()! // FIXME:
+        guard let result = try await query.first() else {
+            throw Abort(.notFound, reason: "No such tree exists")
+        }
+
+        return result
     }
 
     private func loadPerson(_ person: NestedEagerLoadBuilder<QueryBuilder<Tree>, ChildrenProperty<Tree, Person>>) {
-        person.with(\.$family)
+        person
+            .with(\.$family)
+            .with(\.$parentFamily)
     }
-
-    // private func loadFamily(_: NestedEagerLoadBuilder<QueryBuilder<Tree>, ChildrenProperty<Tree, Family>>) {}
 }

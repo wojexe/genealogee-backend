@@ -4,7 +4,7 @@ extension PeopleService {
         let userID = try user.requireID()
 
         guard let person = try? Person(from: data, creatorID: userID) else {
-            throw PersonError(.couldNotInstantiate)
+            throw PersonError(.couldNotParse)
         }
 
         let tree: Tree

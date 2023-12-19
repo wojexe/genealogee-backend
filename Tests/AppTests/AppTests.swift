@@ -5,8 +5,7 @@ final class AppTests: XCTestCase {
     var app: Application!
 
     override func setUp() async throws {
-        app = Application(.testing)
-        try await configure(app)
+        app = try await Application.testable()
     }
 
     override func tearDown() async throws {
