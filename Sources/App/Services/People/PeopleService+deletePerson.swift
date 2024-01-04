@@ -4,6 +4,11 @@ import Vapor
 extension PeopleService {
     // TODO: scope for user
     func deletePerson(_ id: UUID) async throws {
+        // req.
+        //     people.
+        //     .scoped(by: .currentUser)
+        //     .get(id)
+
         let person = try await Person
             .query(on: req.db)
             .filter(\.$id == id)

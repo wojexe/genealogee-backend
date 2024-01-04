@@ -2,13 +2,19 @@ import Fluent
 import Vapor
 
 final class TreeSnapshot: Model, Content {
-    static let schema = "tree_versions"
+    static let schema = "tree_snapshots"
 
     @ID
     var id: UUID?
 
+    @Parent(key: "creator_id")
+    var creator: User
+
     @Parent(key: "tree_id")
     var tree: Tree
+
+    @Field(key: "snapshot_data")
+    var snapshotData: Tree.Snapshot
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?

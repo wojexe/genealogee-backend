@@ -14,13 +14,13 @@ struct AuthenticationController: RouteCollection {
         auth.get("me", use: getCurrentUser)
     }
 
-    func login(req: Request) throws -> HTTPResponseStatus {
+    func login(req: Request) throws -> HTTPStatus {
         try req.auth.require(User.self)
 
         return .ok
     }
 
-    func register(req: Request) async throws -> HTTPResponseStatus {
+    func register(req: Request) async throws -> HTTPStatus {
         try User.validate(content: req)
 
         let registerRequest = try req.content.decode(User.Register.self)

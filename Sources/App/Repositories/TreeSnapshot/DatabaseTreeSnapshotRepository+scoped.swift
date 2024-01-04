@@ -1,9 +1,9 @@
 import Fluent
 import Vapor
 
-extension DatabaseTreeRepository {
-    func scoped(by scope: TreeRepositoryScope = .currentUser) throws -> QueryBuilder<Tree> {
-        let query = Tree.query(on: req.db)
+extension DatabaseTreeSnapshotRepository {
+    func scoped(by scope: TreeSnapshotRepositoryScope) throws -> QueryBuilder<TreeSnapshot> {
+        let query = TreeSnapshot.query(on: req.db)
 
         return switch scope {
         case .currentUser:
@@ -15,7 +15,7 @@ extension DatabaseTreeRepository {
         }
     }
 
-    private func scopedByCurrentUser(_ query: QueryBuilder<Tree>) throws -> QueryBuilder<Tree> {
+    private func scopedByCurrentUser(_ query: QueryBuilder<TreeSnapshot>) throws -> QueryBuilder<TreeSnapshot> {
         let user = try req.auth.require(User.self)
         let userID = try user.requireID()
 

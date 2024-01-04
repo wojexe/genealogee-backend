@@ -38,14 +38,14 @@ final class Tree: Model, Content {
         self.rootFamilyID = rootFamilyID
     }
 
-    func snapshot(during req: Request) async throws {
+    func snapshot(during req: Request) async throws -> TreeSnapshot {
         try await req.treeService.snapshot(self)
     }
 }
 
 extension Tree: Validatable {
-    static func validations(_ d: inout Validations) {
-        d.add("name", as: String.self, is: .count(...64))
-        d.add("rootFamilyID", as: UUID.self, required: false)
+    static func validations(_ val: inout Validations) {
+        val.add("name", as: String.self, is: .count(...64))
+        val.add("rootFamilyID", as: UUID.self, required: false)
     }
 }

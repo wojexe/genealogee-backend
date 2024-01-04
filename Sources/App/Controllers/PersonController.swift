@@ -48,10 +48,9 @@ struct PersonController: RouteCollection {
     }
 
     func all(req: Request) async throws -> [Person] {
-        let user = req.auth.get(User.self)!
-
-        return try await Person.query(on: req.db)
-            .filter(\.$creator.$id == user.id!)
+        try await req
+            .people
+            .scoped(by: .currentUser)
             .all()
     }
 }
