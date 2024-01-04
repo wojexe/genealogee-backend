@@ -1,7 +1,7 @@
 @testable import App
 import XCTVapor
 
-final class AppTests: XCTestCase {
+final class PingTest: XCTestCase {
     var app: Application!
 
     override func setUp() async throws {

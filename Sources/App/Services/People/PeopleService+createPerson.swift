@@ -22,7 +22,7 @@ extension PeopleService {
             let personID = try person.requireID()
 
             if try await tree.$families.get(on: db).isEmpty {
-                let family = Family(treeID: treeID)
+                let family = Family(creatorID: userID, treeID: treeID)
                 try await family.save(on: db)
 
                 let familyID = try family.requireID()

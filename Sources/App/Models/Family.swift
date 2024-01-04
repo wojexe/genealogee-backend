@@ -7,6 +7,9 @@ final class Family: Model, Content {
     @ID
     var id: UUID?
 
+    @Parent(key: "creator_id")
+    var creator: User
+
     @Parent(key: "tree_id")
     var tree: Tree
 
@@ -18,7 +21,7 @@ final class Family: Model, Content {
 
     init() {}
 
-    init(id: UUID? = nil, treeID: UUID) {
+    init(id: UUID? = nil, creatorID: UUID, treeID: UUID) {
         self.id = id
         $tree.id = treeID
     }

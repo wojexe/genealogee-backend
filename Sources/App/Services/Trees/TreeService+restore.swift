@@ -57,8 +57,10 @@ extension TreeService {
                                  treeID: UUID,
                                  on db: Database) async throws -> [UUID: Family]
     {
+        let creatorID = try req.auth.require(User.self).requireID()
+
         let families = familySnapshots.reduce(into: [:]) { mapping, familySnapshot in
-            mapping[familySnapshot.sourceFamilyID] = Family(treeID: treeID)
+            mapping[familySnapshot.sourceFamilyID] = Family(creatorID: creatorID, treeID: treeID)
         }
 
         try await families.map(\.value).create(on: db)
