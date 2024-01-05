@@ -23,6 +23,7 @@ final class Family: Model, Content {
 
     init(id: UUID? = nil, creatorID: UUID, treeID: UUID) {
         self.id = id
+        $creator.id = creatorID
         $tree.id = treeID
     }
 
