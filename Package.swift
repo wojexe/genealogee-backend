@@ -18,7 +18,7 @@ let package = Package(
         // 🥞 A powerful SQL query builder.
         .package(url: "https://github.com/vapor/sql-kit.git", from: "3.0.0"),
         // Fake data generator for mocks
-        .package(url: "https://github.com/vadymmarkov/Fakery", from: "5.0.0")
+        .package(url: "https://github.com/vadymmarkov/Fakery", from: "5.0.0"),
     ],
     targets: [
         .executableTarget(
@@ -31,16 +31,20 @@ let package = Package(
                 .product(name: "SQLKit", package: "sql-kit"),
             ]
         ),
-        .testTarget(name: "AppTests", dependencies: [
-            .target(name: "App"),
-            .product(name: "XCTVapor", package: "vapor"),
+        .testTarget(
+            name: "AppTests",
+            dependencies: [
+                .target(name: "App"),
+                .product(name: "XCTVapor", package: "vapor"),
 
-            // Workaround for https://github.com/apple/swift-package-manager/issues/6940
-            .product(name: "Vapor", package: "vapor"),
-            .product(name: "Fluent", package: "Fluent"),
-            .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
-            .product(name: "SQLKit", package: "sql-kit"),
-            .product(name: "Fakery", package: "Fakery"),
-        ]),
+                // Workaround for https://github.com/apple/swift-package-manager/issues/6940
+                .product(name: "Vapor", package: "vapor"),
+                .product(name: "Fluent", package: "Fluent"),
+                .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
+                .product(name: "SQLKit", package: "sql-kit"),
+                .product(name: "Fakery", package: "Fakery"),
+            ],
+            path: "Tests/App"
+        ),
     ]
 )
