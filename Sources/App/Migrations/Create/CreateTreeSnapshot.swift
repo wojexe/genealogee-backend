@@ -6,7 +6,7 @@ struct CreateTreeSnapshot: AsyncMigration {
             .id()
             .field("creator_id", .uuid, .required)
             .field("tree_id", .uuid, .required)
-            .field("snapshot", .json, .required)
+            .field("snapshot_data", .json, .required)
             .field("created_at", .datetime, .required)
             .field("deleted_at", .datetime)
             .create()

@@ -14,6 +14,7 @@ protocol PersonRepository {
 
     func scoped(by scope: PersonRepositoryScope) throws -> QueryBuilder<Person>
     func get(_ id: UUID) async throws -> Person
+    func get(_ ids: [UUID]) async throws -> [Person]
 }
 
 struct PersonRepositoryFactory {

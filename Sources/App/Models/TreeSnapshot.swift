@@ -26,4 +26,6 @@ final class TreeSnapshot: Model, Content {
         $tree.id = treeID
         self.createdAt = createdAt
     }
+
+    struct DTO {}
 }

@@ -1,16 +1,15 @@
 import Fluent
 import Vapor
 
-// TODO: Better error handling
 struct TreeController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        routes.get("trees", use: all)
-
         let tree = routes.grouped("tree")
 
         tree.post("create", use: create)
 
         tree.get(":id", use: byID)
+
+        routes.get("trees", use: all)
     }
 
     func create(req: Request) async throws -> Tree.Created {
@@ -21,32 +20,30 @@ struct TreeController: RouteCollection {
         return try await req.treeService.create(from: treeData)
     }
 
-    func all(req: Request) async throws -> [Tree] {
-        try await req
+    func all(req: Request) async throws -> [Tree.DTO.Send] {
+        let trees = try await req
             .trees
             .scoped(by: .currentUser)
             .with(\.$creator)
             .with(\.$people)
-            .with(\.$families) { family in
-                family
-                    .with(\.$children)
-                    .with(\.$parents)
-            }
+            .with(\.$families)
             .all()
-    }
 
-    // TODO: Error handling (maybe even in the repo itself)
-    func byID(req: Request) async throws -> Tree {
-        let treeID = try req.parameters.require("id", as: UUID.self)
+        var DTOs: [Tree.DTO.Send] = []
 
-        struct Params: Content {
-            let entire: Bool?
+        for tree in trees {
+            try await DTOs.append(Tree.DTO.Send(tree, on: req.db))
         }
 
-        let entire = try req.query.get(Params.self).entire ?? false
+        return DTOs
+    }
 
-        return try await req
-            .trees
-            .get(id: treeID, entire: entire)
+    func byID(req: Request) async throws -> Tree.DTO.Send {
+        let treeID = try req.parameters.require("id", as: UUID.self)
+
+        return try await .init(
+            req.trees.get(id: treeID, entire: false),
+            on: req.db
+        )
     }
 }

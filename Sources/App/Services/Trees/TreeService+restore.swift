@@ -52,8 +52,9 @@ extension TreeService {
         return people
     }
 
+    // TODO: Rewrite to make use of `attach`
     private func restoreFamilies(_ familySnapshots: [Family.Snapshot],
-                                 _ people: [UUID: Person],
+                                 _: [UUID: Person],
                                  treeID: UUID,
                                  on db: Database) async throws -> [UUID: Family]
     {

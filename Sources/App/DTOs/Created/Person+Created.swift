@@ -3,7 +3,7 @@ import Vapor
 
 extension Person {
     struct Created: Content {
-        var ID: UUID
+        var id: UUID
         var creatorID: UUID
         var treeID: UUID
         var familyID: UUID?
@@ -14,7 +14,7 @@ extension Person {
         var dateOf: Dates
 
         init(_ person: Person, _ db: Database) async throws {
-            ID = try person.requireID()
+            id = try person.requireID()
             creatorID = person.$creator.id
             treeID = person.$tree.id
             familyID = try await person.$family.get(on: db).first?.id

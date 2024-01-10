@@ -2,19 +2,9 @@ import Fluent
 import Vapor
 
 extension PeopleService {
-    // TODO: scope for user
     func deletePerson(_ id: UUID) async throws {
-        // req.
-        //     people.
-        //     .scoped(by: .currentUser)
-        //     .get(id)
+        let person = try await req.people.get(id)
 
-        let person = try await Person
-            .query(on: req.db)
-            .filter(\.$id == id)
-            .with(\.$family) { $0.with(\.$children).with(\.$parents) }
-            .first()!
-
-        try await person.nuke(on: req.db) // Not implemented yet
+        try await person.nuke(on: req.db)
     }
 }

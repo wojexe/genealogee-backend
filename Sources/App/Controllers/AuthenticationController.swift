@@ -21,7 +21,7 @@ struct AuthenticationController: RouteCollection {
     }
 
     func register(req: Request) async throws -> HTTPStatus {
-        try User.validate(content: req)
+        try User.Register.validate(content: req)
 
         let registerRequest = try req.content.decode(User.Register.self)
 
@@ -43,12 +43,14 @@ struct AuthenticationController: RouteCollection {
             throw Abort(.internalServerError)
         }
 
+        req.auth.login(user)
+
         return .created
     }
 
-    func getCurrentUser(req: Request) throws -> String {
+    func getCurrentUser(req: Request) throws -> User.DTO.Send {
         let user = try req.auth.require(User.self)
 
-        return "You're logged in as: \(user.email)"
+        return .init(from: user)
     }
 }

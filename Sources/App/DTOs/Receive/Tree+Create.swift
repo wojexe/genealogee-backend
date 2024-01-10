@@ -3,13 +3,14 @@ import Vapor
 
 extension Tree {
     convenience init(from req: Create, creatorID: UUID) throws {
-        self.init(creatorID: creatorID,
-                  rootFamilyID: req.rootFamilyID,
-                  name: req.name)
+        self.init(creatorID: creatorID, name: req.name)
     }
 
-    struct Create: Content {
+    struct Create: Content, Validatable {
         var name: String
-        var rootFamilyID: UUID?
+
+        static func validations(_ validations: inout Validations) {
+            validations.add("name", as: String.self, is: .count(...128))
+        }
     }
 }

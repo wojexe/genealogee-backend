@@ -57,10 +57,25 @@ final class Person: Model, Content {
         self.dateOf = dateOf
     }
 
-    /// Delete the person along with all of the referencing entities (families, thus descendants)
-    func nuke(on _: Database) async throws {
-        // TODO:
+    func nuke(on db: Database) async throws {
+        try await db.transaction { db in
+            let families = try await self.$family.get(on: db)
+
+            for family in families {
+                let parents = try await family.$parents.get(on: db)
+
+                if parents.count == 1 {
+                    try await family.nuke(on: db)
+                } else {
+                    try await family.$parents.detach(self, on: db)
+                }
+            }
+
+            try await self.delete(on: db)
+        }
     }
+
+    struct DTO {}
 }
 
 final class Dates: Fields, Content {

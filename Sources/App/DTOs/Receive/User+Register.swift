@@ -8,9 +8,23 @@ extension User {
                   passwordHash: hash)
     }
 
-    struct Register: Content {
+    struct Register: Content, Validatable {
         var email: String
         var name: String
         var password: String
+
+        static func validations(_ validations: inout Validations) {
+            validations.add("email",
+                            as: String.self,
+                            is: .email)
+
+            validations.add("name",
+                            as: String.self,
+                            is: !.empty && .count(...64))
+
+            validations.add("password",
+                            as: String.self,
+                            is: .count(8 ... 1024))
+        }
     }
 }

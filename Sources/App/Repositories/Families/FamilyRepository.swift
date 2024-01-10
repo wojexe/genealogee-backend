@@ -7,13 +7,20 @@ enum FamilyRepositoryScope {
     case none
 }
 
+enum FamilyRepositoryRelation {
+    case child(UUID)
+    case parent(UUID)
+    case any(UUID)
+}
+
 protocol FamilyRepository {
     var req: Request { get }
 
     init(req: Request)
 
-    func scoped(by scope: FamilyRepositoryScope) throws -> QueryBuilder<Family>
     func get(_ id: UUID) async throws -> Family
+    func scoped(by scope: FamilyRepositoryScope) throws -> QueryBuilder<Family>
+    func has(_ familyID: UUID, _ relation: FamilyRepositoryRelation) async throws -> Bool
 }
 
 struct FamilyRepositoryFactory {

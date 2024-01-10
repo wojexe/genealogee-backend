@@ -7,6 +7,7 @@ struct PersonController: RouteCollection {
         person.post("create", use: create)
 
         let certainPerson = person.grouped(":personID")
+        certainPerson.get(use: byID)
         certainPerson.delete(use: delete)
 
         certainPerson.group("add") { add in
@@ -14,7 +15,7 @@ struct PersonController: RouteCollection {
             add.post("child", ":childID", use: child)
         }
 
-        routes.get("people", use: all) // Mostly for debugging, might be hidden behind a flag later on
+        routes.get("people", use: all)
     }
 
     func create(req: Request) async throws -> Person.Created {
@@ -25,14 +26,14 @@ struct PersonController: RouteCollection {
         return try await req.peopleService.createPerson(from: personData)
     }
 
-    func partner(req: Request) async throws -> Family.Created {
+    func partner(req: Request) async throws -> Family.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
         let partnerID = try req.parameters.require("partnerID", as: UUID.self)
 
         return try await req.peopleService.addPartner(personID: personID, partnerID: partnerID)
     }
 
-    func child(req: Request) async throws -> Family.Created {
+    func child(req: Request) async throws -> Family.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
         let childID = try req.parameters.require("childID", as: UUID.self)
 
@@ -47,10 +48,22 @@ struct PersonController: RouteCollection {
         return .ok
     }
 
+    func byID(req: Request) async throws -> Person.DTO.Send {
+        let personID = try req.parameters.require("personID", as: UUID.self)
+
+        return try await .init(req.people.get(personID))
+    }
+
     func all(req: Request) async throws -> [Person] {
-        try await req
+        guard req.application.environment == .development else {
+            throw Abort(.notFound)
+        }
+
+        return try await req
             .people
             .scoped(by: .currentUser)
+            .with(\.$family)
+            .with(\.$parentFamily)
             .all()
     }
 }

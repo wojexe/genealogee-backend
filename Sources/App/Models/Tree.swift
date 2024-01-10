@@ -38,9 +38,11 @@ final class Tree: Model, Content {
         self.rootFamilyID = rootFamilyID
     }
 
-    func snapshot(during req: Request) async throws -> TreeSnapshot {
+    func snapshot(during req: Request) async throws -> TreeSnapshot.DTO.Created {
         try await req.treeService.snapshot(self)
     }
+
+    struct DTO {}
 }
 
 extension Tree: Validatable {

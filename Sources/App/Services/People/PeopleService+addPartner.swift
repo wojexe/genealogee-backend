@@ -3,21 +3,16 @@ import Vapor
 
 extension PeopleService {
     @discardableResult
-    func addPartner(personID: UUID, partnerID: UUID) async throws -> Family.Created {
-        let person = try await Person
-            .query(on: req.db)
-            .filter(\.$id == personID)
-            .with(\.$family)
-            .first()!
+    func addPartner(personID: UUID, partnerID: UUID) async throws -> Family.DTO.Send {
+        let person = try await req.people.get(personID)
+        let partner = try await req.people.get(partnerID)
 
-        guard let family = person.family.first else {
-            throw Abort(.internalServerError)
+        guard let family = try await person.$family.get(on: req.db).first else {
+            throw Abort(.internalServerError, reason: "Person with ID '\(personID)' does not have a family")
         }
 
-        let familyID = try family.requireID()
+        try await family.$parents.attach(partner, on: req.db)
 
-        try await req.familiesService.addParent(familyID: familyID, parentID: partnerID)
-
-        return try await Family.Created(family, req.db)
+        return try await Family.DTO.Send(family, on: req.db)
     }
 }
