@@ -7,7 +7,10 @@ struct TreeController: RouteCollection {
 
         tree.post("create", use: create)
 
-        tree.get(":id", use: byID)
+        let certainTree = tree.grouped(":id")
+
+        certainTree.get(use: byID)
+        certainTree.delete(use: delete)
 
         routes.get("trees", use: all)
     }
@@ -20,7 +23,30 @@ struct TreeController: RouteCollection {
         return try await req.treeService.create(from: treeData)
     }
 
+    func delete(req: Request) async throws -> HTTPStatus {
+        let treeID = try req.parameters.require("id", as: UUID.self)
+
+        req.logger.info("Deleting tree with ID \(treeID)...")
+
+        try await req.treeService.deleteTree(treeID)
+
+        return .ok
+    }
+
+    func byID(req: Request) async throws -> Tree.DTO.Send {
+        let treeID = try req.parameters.require("id", as: UUID.self)
+
+        return try await .init(
+            req.trees.get(id: treeID),
+            on: req.db
+        )
+    }
+
     func all(req: Request) async throws -> [Tree.DTO.Send] {
+        guard req.application.environment == .development else {
+            throw Abort(.notFound)
+        }
+
         let trees = try await req
             .trees
             .scoped(by: .currentUser)
@@ -36,14 +62,5 @@ struct TreeController: RouteCollection {
         }
 
         return DTOs
-    }
-
-    func byID(req: Request) async throws -> Tree.DTO.Send {
-        let treeID = try req.parameters.require("id", as: UUID.self)
-
-        return try await .init(
-            req.trees.get(id: treeID),
-            on: req.db
-        )
     }
 }

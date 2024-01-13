@@ -3,8 +3,7 @@ import Vapor
 
 extension DatabasePersonRepository {
     func get(_ id: UUID) async throws -> Person {
-        let query = try scoped(by: .currentUser)
-            .filter(\.$id == id)
+        let query = try byID(id)
 
         guard let result = try await query.first() else {
             throw Abort(.notFound, reason: "Person with ID '\(id)' does not exist")

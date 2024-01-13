@@ -3,8 +3,7 @@ import Vapor
 
 extension DatabaseTreeRepository {
     func get(id: UUID) async throws -> Tree {
-        let query = try scoped(by: .currentUser)
-            .filter(\.$id == id)
+        let query = try byID(id)
             .with(\.$people)
             .with(\.$families)
 
