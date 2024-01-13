@@ -3,7 +3,7 @@ import Vapor
 
 extension DatabaseFamilyRepository {
     func scoped(by scope: FamilyRepositoryScope) throws -> QueryBuilder<Family> {
-        let query = Family.query(on: req.db)
+        let query = Family.query(on: db)
 
         switch scope {
         case .currentUser:

@@ -18,15 +18,14 @@ extension DatabasePersonRepository {
             .filter(\.$id ~~ ids)
             .all()
 
+        // TODO: reconsider
         if result.count != ids.count {
             let difference = try? ids.difference(from: result.map { try $0.requireID() })
 
-            var message: String
-
-            if let difference = difference {
-                message = "Not all people were found: \(difference)"
+            let message = if let difference {
+                "Not all people were found: \(difference)"
             } else {
-                message = "Not all people were found. Could not calculate the difference."
+                "Not all people were found. Could not calculate the difference."
             }
 
             req.logger.warning(.init(stringLiteral: message))

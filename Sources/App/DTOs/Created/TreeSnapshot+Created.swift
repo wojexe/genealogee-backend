@@ -14,7 +14,7 @@ extension TreeSnapshot.DTO {
             creatorID = try await snapshot.$creator.get(on: db).requireID()
             treeID = try await snapshot.$tree.get(on: db).requireID()
             snapshotData = snapshot.snapshotData
-            createdAt = Date.now // TODO: Make sure this is correct
+            createdAt = snapshot.createdAt!
         }
     }
 }

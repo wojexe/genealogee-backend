@@ -10,10 +10,15 @@ enum TreeRepositoryScope {
 protocol TreeRepository {
     var req: Request { get }
 
-    init(req: Request)
+    init(req: Request, db: Database?)
+
+    func using(_ db: Database) -> Self
 
     func scoped(by scope: TreeRepositoryScope) throws -> QueryBuilder<Tree>
-    func get(id: UUID, entire recursive: Bool) async throws -> Tree
+    func byID(_ id: UUID) throws -> QueryBuilder<Tree>
+
+    func get(id: UUID) async throws -> Tree
+    func has(_ id: UUID) async throws -> Bool
 }
 
 struct TreeRepositoryFactory {

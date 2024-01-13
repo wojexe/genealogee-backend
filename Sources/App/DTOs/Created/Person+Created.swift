@@ -24,5 +24,9 @@ extension Person {
             birthName = person.birthName
             dateOf = person.dateOf
         }
+
+        func afterDecode() throws {
+            // code
+        }
     }
 }

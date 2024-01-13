@@ -11,7 +11,7 @@ extension Person {
                   dateOf: createRequest.dateOf)
     }
 
-    struct Create: Content {
+    final class Create: Content, Validatable {
         var treeID: UUID
         var givenNames: String
         var familyName: String
@@ -20,5 +20,22 @@ extension Person {
 
         var childOf: UUID?
         var partnerOf: UUID?
+
+        static func validations(_ val: inout Validations) {
+            val.add("treeID", as: UUID.self, is: .valid)
+            val.add("givenNames", as: String.self, is: .count(...128))
+            val.add("familyName", as: String.self, is: .count(...128))
+            val.add("birthName", as: String?.self, is: .nil || .count(...128), required: false)
+
+            val.add("dateOf") { val in
+                val.add("birth", as: Date?.self, is: .valid, required: false)
+                val.add("birthCustom", as: String?.self, is: .nil || .count(...128), required: false)
+                val.add("death", as: Date?.self, is: .valid, required: false)
+                val.add("deathCustom", as: String?.self, is: .nil || .count(...128), required: false)
+            }
+
+            val.add("childOf", as: UUID?.self, required: false)
+            val.add("partnerOf", as: UUID?.self, required: false)
+        }
     }
 }

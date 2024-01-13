@@ -3,7 +3,7 @@ import Vapor
 
 extension DatabasePersonRepository {
     func scoped(by scope: PersonRepositoryScope) throws -> QueryBuilder<Person> {
-        let query = Person.query(on: req.db)
+        let query = Person.query(on: db)
 
         return switch scope {
         case .currentUser:

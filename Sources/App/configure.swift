@@ -37,7 +37,7 @@ public func configure(_ app: Application) async throws {
     case .development: fallthrough
     case .testing:
         app.sessions.use(.memory)
-        app.logger.logLevel = .debug
+        app.logger.logLevel = .trace
 
     default:
         app.sessions.use(.fluent)

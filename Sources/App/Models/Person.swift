@@ -108,19 +108,3 @@ final class Dates: Fields, Content {
         death?.formatted() ?? deathCustom
     }
 }
-
-extension Person: Validatable {
-    static func validations(_ val: inout Validations) {
-        val.add("treeID", as: UUID.self, is: .valid)
-        val.add("givenNames", as: String.self, is: .count(...128))
-        val.add("familyName", as: String.self, is: .count(...128))
-        val.add("birthName", as: String?.self, is: .nil || .count(...128), required: false)
-
-        val.add("dateOf") { val in
-            val.add("birth", as: Date?.self, is: .valid, required: false)
-            val.add("birthCustom", as: String?.self, is: .nil || .count(...128), required: false)
-            val.add("death", as: Date?.self, is: .valid, required: false)
-            val.add("deathCustom", as: String?.self, is: .nil || .count(...128), required: false)
-        }
-    }
-}

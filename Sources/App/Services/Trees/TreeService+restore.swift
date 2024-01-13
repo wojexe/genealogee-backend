@@ -19,11 +19,17 @@ extension TreeService {
 
             let treeID = try tree.requireID()
 
-            let people: [UUID: Person] = try await restorePeople(snapshotData.people, treeID: treeID, on: db)
-            let families: [UUID: Family] = try await restoreFamilies(snapshotData.families, people, treeID: treeID, on: db)
+            // TODO: Extract errors to an error type
+            guard let people = try? await restorePeople(snapshotData.people, treeID: treeID, on: db) else {
+                throw Abort(.internalServerError, reason: "Error while restoring snapshot")
+            }
+
+            guard let families = try? await restoreFamilies(snapshotData.families, people, treeID: treeID, on: db) else {
+                throw Abort(.internalServerError, reason: "Error while restoring snapshot")
+            }
 
             guard let rootFamily = families[snapshotData.rootFamilyID] else {
-                throw Abort(.internalServerError)
+                throw Abort(.internalServerError, reason: "Error while restoring snapshot")
             }
 
             let rootFamilyID = try rootFamily.requireID()
@@ -36,6 +42,7 @@ extension TreeService {
         return try Tree.Created(tree)
     }
 
+    /// Retuns a mapping of source IDs to the restored people objects
     private func restorePeople(_ people: [Person.Snapshot],
                                treeID: UUID,
                                on db: Database) async throws -> [UUID: Person]
@@ -52,9 +59,9 @@ extension TreeService {
         return people
     }
 
-    // TODO: Rewrite to make use of `attach`
+    /// Returns a mapping of source IDs to the restored family objects
     private func restoreFamilies(_ familySnapshots: [Family.Snapshot],
-                                 _: [UUID: Person],
+                                 _ people: [UUID: Person],
                                  treeID: UUID,
                                  on db: Database) async throws -> [UUID: Family]
     {
@@ -72,8 +79,8 @@ extension TreeService {
         for familySnapshot in familySnapshots {
             let familyID = try families[familySnapshot.sourceFamilyID]!.requireID()
 
-            childLinks += familySnapshot.childIDs.map { .init(familyID: familyID, personID: $0) }
-            parentLinks += familySnapshot.parentIDs.map { .init(familyID: familyID, personID: $0) }
+            childLinks += try familySnapshot.childIDs.map { try .init(familyID: familyID, personID: people[$0]!.requireID()) }
+            parentLinks += try familySnapshot.parentIDs.map { try .init(familyID: familyID, personID: people[$0]!.requireID()) }
         }
 
         try await childLinks.create(on: db)

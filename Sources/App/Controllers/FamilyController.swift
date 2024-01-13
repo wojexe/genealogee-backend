@@ -30,12 +30,16 @@ struct FamilyController: RouteCollection {
         throw Abort(.notImplemented)
     }
 
-    func all(req: Request) async throws -> HTTPStatus {
+    func all(req: Request) async throws -> [Family] {
         guard req.application.environment == .development else {
             throw Abort(.notFound)
         }
 
-
-        throw Abort(.notImplemented)
+        return try await req
+            .families
+            .scoped(by: .currentUser)
+            .with(\.$parents)
+            .with(\.$children)
+            .all()
     }
 }

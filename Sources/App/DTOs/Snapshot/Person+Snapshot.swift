@@ -17,5 +17,13 @@ extension Person {
         let familyName: String
         let birthName: String?
         let dateOf: Dates
+
+        init(from person: Person) throws {
+            sourcePersonID = try person.requireID()
+            givenNames = person.givenNames
+            familyName = person.familyName
+            birthName = person.birthName
+            dateOf = person.dateOf
+        }
     }
 }

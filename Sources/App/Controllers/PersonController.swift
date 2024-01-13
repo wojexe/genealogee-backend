@@ -1,4 +1,3 @@
-import Fluent
 import Vapor
 
 struct PersonController: RouteCollection {
@@ -10,34 +9,39 @@ struct PersonController: RouteCollection {
         certainPerson.get(use: byID)
         certainPerson.delete(use: delete)
 
-        certainPerson.group("add") { add in
-            add.post("partner", ":partnerID", use: partner)
-            add.post("child", ":childID", use: child)
-        }
+        // Commented, since for now we don't want users to be able to make
+        // connections freely between already created people in the tree.
+        //
+        // certainPerson.group("add") { add in
+        //     add.post("partner", ":partnerID", use: partner)
+        //     add.post("child", ":childID", use: child)
+        // }
 
         routes.get("people", use: all)
     }
 
     func create(req: Request) async throws -> Person.Created {
-        try Person.validate(content: req)
+        try Person.Create.validate(content: req)
 
-        let personData = try await Person.Create.decodeRequest(req)
+        let data = try await Person.Create.decodeRequest(req)
 
-        return try await req.peopleService.createPerson(from: personData)
+        return try await req.peopleService.createPerson(from: data)
     }
 
+    /// Currently unused.
     func partner(req: Request) async throws -> Family.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
         let partnerID = try req.parameters.require("partnerID", as: UUID.self)
 
-        return try await req.peopleService.addPartner(personID: personID, partnerID: partnerID)
+        return try await req.peopleService.addRelative(personID: personID, .partner(partnerID))
     }
 
+    /// Currently unused.
     func child(req: Request) async throws -> Family.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
         let childID = try req.parameters.require("childID", as: UUID.self)
 
-        return try await req.peopleService.addChild(personID: personID, childID: childID)
+        return try await req.peopleService.addRelative(personID: personID, .child(childID))
     }
 
     func delete(req: Request) async throws -> HTTPStatus {

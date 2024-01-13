@@ -6,13 +6,13 @@ extension DatabaseFamilyRepository {
         let family = try await get(familyID)
 
         switch relation {
-        case .child(let childID):
+        case let .child(childID):
             return try await family.$children.isAttached(toID: childID, on: req.db)
 
-        case .parent(let parentID):
+        case let .parent(parentID):
             return try await family.$parents.isAttached(toID: parentID, on: req.db)
 
-        case .any(let personID):
+        case let .any(personID):
             let isChild = try await family.$children.isAttached(toID: personID, on: req.db)
             let isParent = try await family.$parents.isAttached(toID: personID, on: req.db)
 

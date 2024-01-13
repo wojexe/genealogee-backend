@@ -9,12 +9,22 @@ enum PersonRepositoryScope {
 
 protocol PersonRepository {
     var req: Request { get }
+    var db: Database { get }
 
-    init(req: Request)
+    init(req: Request, db: Database?)
+
+    func using(_ db: Database) -> Self
 
     func scoped(by scope: PersonRepositoryScope) throws -> QueryBuilder<Person>
+
+    func byID(_ id: UUID) throws -> QueryBuilder<Person>
+    func byIDs(_ ids: [UUID]) throws -> QueryBuilder<Person>
+
     func get(_ id: UUID) async throws -> Person
     func get(_ ids: [UUID]) async throws -> [Person]
+
+    func has(_ id: UUID) async throws -> Bool
+    func has(_ ids: [UUID]) async throws -> Bool
 }
 
 struct PersonRepositoryFactory {

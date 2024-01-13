@@ -2,17 +2,26 @@ import Fluent
 import Vapor
 
 extension FamiliesService {
-    func createFamily(treeID: UUID, parents: [UUID] = [], children: [UUID] = []) async throws -> Family {
+    func createFamily(treeID: UUID, parents: [UUID] = [], children: [UUID] = [], on db: Database?) async throws -> Family {
+        let db = db ?? req.db
+
         let userID = try req.auth.require(User.self).requireID()
 
         let family = Family(creatorID: userID, treeID: treeID)
 
-        try await family.save(on: req.db)
+        try await family.save(on: db)
 
-        let familyID = try family.requireID()
+        if !children.isEmpty {
+            req.logger.info("Adding children to family \(family.id!)")
+            try await req.familiesService.addChildren(familyID: family.requireID(), childIDs: children, on: db)
+        }
 
-        try await req.familiesService.addChildren(familyID: familyID, childIDs: children)
-        try await req.familiesService.addParents(familyID: familyID, parentIDs: parents)
+        if !parents.isEmpty {
+            req.logger.info("Adding parents to family \(family.id!)")
+            req.logger.info("parentIDs: \(parents)")
+            req.logger.info("Database: \(db)")
+            try await req.familiesService.addParents(familyID: family.requireID(), parentIDs: parents, on: db)
+        }
 
         return family
     }

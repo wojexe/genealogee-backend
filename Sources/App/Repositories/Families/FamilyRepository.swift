@@ -15,11 +15,16 @@ enum FamilyRepositoryRelation {
 
 protocol FamilyRepository {
     var req: Request { get }
+    var db: Database { get }
 
-    init(req: Request)
+    init(req: Request, db: Database?)
+
+    func using(_ db: Database) -> Self
+
+    func scoped(by scope: FamilyRepositoryScope) throws -> QueryBuilder<Family>
+    func byID(_ id: UUID) throws -> QueryBuilder<Family>
 
     func get(_ id: UUID) async throws -> Family
-    func scoped(by scope: FamilyRepositoryScope) throws -> QueryBuilder<Family>
     func has(_ familyID: UUID, _ relation: FamilyRepositoryRelation) async throws -> Bool
 }
 

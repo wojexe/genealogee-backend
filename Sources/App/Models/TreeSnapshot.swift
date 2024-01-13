@@ -21,9 +21,16 @@ final class TreeSnapshot: Model, Content {
 
     init() {}
 
-    init(id: UUID? = nil, treeID: UUID, createdAt: Date? = Date.now) {
+    init(id: UUID? = nil,
+         creatorID: UUID,
+         treeID: UUID,
+         snapshotData: Tree.Snapshot,
+         createdAt: Date? = Date.now)
+    {
         self.id = id
+        $creator.id = creatorID
         $tree.id = treeID
+        self.snapshotData = snapshotData
         self.createdAt = createdAt
     }
 

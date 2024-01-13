@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension DatabaseTreeRepository {
-    func get(id: UUID, entire _: Bool = false) async throws -> Tree {
+    func get(id: UUID) async throws -> Tree {
         let query = try scoped(by: .currentUser)
             .filter(\.$id == id)
             .with(\.$people)

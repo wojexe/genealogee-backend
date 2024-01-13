@@ -42,7 +42,7 @@ struct TreeController: RouteCollection {
         let treeID = try req.parameters.require("id", as: UUID.self)
 
         return try await .init(
-            req.trees.get(id: treeID, entire: false),
+            req.trees.get(id: treeID),
             on: req.db
         )
     }
