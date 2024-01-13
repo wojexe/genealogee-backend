@@ -42,10 +42,8 @@ final class Tree: Model, Content {
         try await req.treeService.snapshot(self)
     }
 
+    // Foreign key constraints ensure that all related data is deleted
     func nuke(on db: Database) async throws {
-        try await self.$people.get(on: db).delete(on: db)
-        try await self.$families.get(on: db).delete(on: db)
-        try await self.$snapshots.get(on: db).delete(on: db)
         try await self.delete(on: db)
     }
 

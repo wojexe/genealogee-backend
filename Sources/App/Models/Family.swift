@@ -38,6 +38,8 @@ final class Family: Model, Content {
             for child in children {
                 try await child.nuke(on: db)
             }
+
+            try await self.delete(on: db)
         }
     }
 

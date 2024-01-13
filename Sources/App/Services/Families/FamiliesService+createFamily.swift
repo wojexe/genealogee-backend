@@ -18,8 +18,6 @@ extension FamiliesService {
 
         if !parents.isEmpty {
             req.logger.info("Adding parents to family \(family.id!)")
-            req.logger.info("parentIDs: \(parents)")
-            req.logger.info("Database: \(db)")
             try await req.familiesService.addParents(familyID: family.requireID(), parentIDs: parents, on: db)
         }
 

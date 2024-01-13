@@ -1,4 +1,3 @@
-import Fluent
 import Vapor
 
 struct TreeController: RouteCollection {
@@ -13,6 +12,8 @@ struct TreeController: RouteCollection {
         certainTree.delete(use: delete)
 
         routes.get("trees", use: all)
+
+        routes.delete("trees", use: nukeAllTrees)
     }
 
     func create(req: Request) async throws -> Tree.Created {
@@ -25,8 +26,6 @@ struct TreeController: RouteCollection {
 
     func delete(req: Request) async throws -> HTTPStatus {
         let treeID = try req.parameters.require("id", as: UUID.self)
-
-        req.logger.info("Deleting tree with ID \(treeID)...")
 
         try await req.treeService.deleteTree(treeID)
 
@@ -62,5 +61,17 @@ struct TreeController: RouteCollection {
         }
 
         return DTOs
+    }
+
+    // MARK: - Development
+
+    func nukeAllTrees(req: Request) async throws -> HTTPStatus {
+        guard req.application.environment == .development else {
+            throw Abort(.notFound)
+        }
+
+        try await Tree.query(on: req.db).all().delete(force: true, on: req.db)
+
+        return .ok
     }
 }

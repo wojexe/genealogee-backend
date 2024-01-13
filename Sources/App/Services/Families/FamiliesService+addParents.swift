@@ -5,8 +5,6 @@ extension FamiliesService {
     func addParents(familyID: UUID, parentIDs: [UUID], on db: Database? = nil) async throws {
         let db = db ?? req.db
 
-        req.logger.info("Custom repo in transaction: \(db.inTransaction)")
-
         guard let family = try await req
             .families
             .using(db)

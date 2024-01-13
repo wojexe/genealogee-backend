@@ -62,8 +62,10 @@ final class Person: Model, Content {
             let families = try await self.$family.get(on: db)
 
             for family in families {
+                // The deleted person is a parent of the family
                 let parents = try await family.$parents.get(on: db)
 
+                // So we either nuke it, or detach the person from the family
                 if parents.count == 1 {
                     try await family.nuke(on: db)
                 } else {
