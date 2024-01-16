@@ -6,7 +6,7 @@ extension DatabaseFamilyRepository {
         let query = try byID(id)
 
         guard let result = try await query.first() else {
-            throw Abort(.notFound, reason: "No such family exists")
+            throw Abort(.notFound, reason: "Family#\(id) not found")
         }
 
         return result

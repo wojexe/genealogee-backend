@@ -6,7 +6,7 @@ extension DatabasePersonRepository {
         let query = try byID(id)
 
         guard let result = try await query.first() else {
-            throw Abort(.notFound, reason: "Person with ID '\(id)' does not exist")
+            throw Abort(.notFound, reason: "Person#\(id) not found")
         }
 
         return result
