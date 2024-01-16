@@ -6,6 +6,7 @@ extension DatabaseTreeRepository {
         let query = try byID(id)
             .with(\.$people)
             .with(\.$families)
+            .with(\.$snapshots)
 
         guard let result = try await query.first() else {
             throw Abort(.notFound, reason: "No such tree exists")

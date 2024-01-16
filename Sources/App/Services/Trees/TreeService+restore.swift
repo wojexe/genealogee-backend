@@ -1,10 +1,22 @@
 import Fluent
 import Vapor
 
+enum TreeServiceRestoreUsing: Decodable {
+    case treeID(UUID)
+    case snapshotID(UUID)
+    case snapshotData(Tree.Snapshot)
+}
+
 extension TreeService {
-    func restore(snapshotID: UUID) async throws -> Tree.Created {
+    func restore(treeID: UUID, snapshotID: UUID, on db: Database? = nil) async throws -> Tree {
+        let db = db ?? req.db
+
         let user = try req.auth.require(User.self)
         let userID = try user.requireID()
+
+        let previousTree = try await req
+            .trees
+            .get(id: treeID)
 
         let snapshot = try await req
             .treeSnapshots
@@ -12,9 +24,12 @@ extension TreeService {
 
         let snapshotData = snapshot.snapshotData
 
-        let tree = Tree(creatorID: userID, rootFamilyID: nil, name: snapshotData.name)
+        let tree = try Tree(id: previousTree.requireID(),
+                            creatorID: userID,
+                            name: snapshotData.name)
 
-        try await req.db.transaction { db in
+        try await db.transaction { db in
+            try await previousTree.nuke(on: db)
             try await tree.save(on: db)
 
             let treeID = try tree.requireID()
@@ -32,14 +47,14 @@ extension TreeService {
                 throw Abort(.internalServerError, reason: "Error while restoring snapshot")
             }
 
-            let rootFamilyID = try rootFamily.requireID()
-
-            tree.$rootFamilyID.value = rootFamilyID
+            tree.$people.value = people.map { $0.value }
+            tree.$families.value = families.map { $0.value }
+            tree.$rootFamilyID.value = try rootFamily.requireID()
 
             try await tree.update(on: db)
         }
 
-        return try Tree.Created(tree)
+        return tree
     }
 
     /// Retuns a mapping of source IDs to the restored people objects

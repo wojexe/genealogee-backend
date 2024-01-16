@@ -3,7 +3,6 @@ import FluentPostgresDriver
 import FluentSQLiteDriver
 import Vapor
 
-// configures your application
 public func configure(_ app: Application) async throws {
     try configureDatabase(app)
 
@@ -47,6 +46,7 @@ public func configure(_ app: Application) async throws {
     app.trees.use { DatabaseTreeRepository(req: $0) }
     app.people.use { DatabasePersonRepository(req: $0) }
     app.families.use { DatabaseFamilyRepository(req: $0) }
+    app.treeSnapshots.use { DatabaseTreeSnapshotRepository(req: $0) }
 
     try routes(app)
 }

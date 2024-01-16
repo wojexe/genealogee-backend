@@ -14,9 +14,10 @@ extension DatabaseTreeSnapshotRepository {
     private func getByTreeID(_ id: UUID) async throws -> TreeSnapshot {
         let query = try scoped(by: .currentUser)
             .filter(\.$tree.$id == id)
+            .sort(\.$createdAt, .descending) // Sort by most recent
 
         guard let result = try await query.first() else {
-            throw Abort(.notFound, reason: "No such tree exists")
+            throw Abort(.notFound, reason: "Tree has no snapshots yet")
         }
 
         return result

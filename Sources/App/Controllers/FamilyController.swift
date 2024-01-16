@@ -1,7 +1,6 @@
 import Fluent
 import Vapor
 
-// TODO: Implement FamilyController
 struct FamilyController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let family = routes.grouped("family")
@@ -9,6 +8,10 @@ struct FamilyController: RouteCollection {
 
         routes.get("families", use: all)
     }
+
+    /// These methods are not implemented currently, because it is easier
+    /// to maintain correct relationships this way. The architecture to implement
+    /// there functions is there, but adding this feature expands the scope too far.
 
     func addChild(_: Request) async throws -> HTTPStatus {
         throw Abort(.notImplemented)

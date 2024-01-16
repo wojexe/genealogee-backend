@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension TreeSnapshot.DTO {
-    struct Created: Content {
+    struct Send: Content {
         let id: UUID
         let creatorID: UUID
         let treeID: UUID

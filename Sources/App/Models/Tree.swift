@@ -38,14 +38,16 @@ final class Tree: Model, Content {
         self.rootFamilyID = rootFamilyID
     }
 
-    func snapshot(during req: Request) async throws -> TreeSnapshot.DTO.Created {
-        try await req.treeService.snapshot(self)
-    }
-
     // Foreign key constraints ensure that all related data is deleted
     func nuke(on db: Database) async throws {
-        try await self.delete(on: db)
+        try await delete(on: db)
     }
+
+    func snapshot(on db: Database) async throws -> Tree.Snapshot {
+        try await Tree.Snapshot(from: self, on: db)
+    }
+
+    // TODO: implement `restore` here to meet the requirements fro the memento pattern
 
     struct DTO {}
 }
