@@ -1,12 +1,6 @@
 import Fluent
 import Vapor
 
-enum TreeServiceRestoreUsing: Decodable {
-    case treeID(UUID)
-    case snapshotID(UUID)
-    case snapshotData(Tree.Snapshot)
-}
-
 extension TreeService {
     func restore(treeID: UUID, snapshotID: UUID, on db: Database? = nil) async throws -> Tree {
         let db = db ?? req.db
