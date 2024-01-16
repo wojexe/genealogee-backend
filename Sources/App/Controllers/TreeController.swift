@@ -73,12 +73,14 @@ struct TreeController: RouteCollection {
         return try await .init(latestSnapshot, req.db)
     }
 
-    func restoreLatestSnapshot(req: Request) async throws -> Tree {
+    func restoreLatestSnapshot(req: Request) async throws -> Tree.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
         let latestSnapshot = try await req.treeSnapshots.get(by: .treeID(treeID))
 
-        return try await req.treeService.restore(treeID: treeID, snapshotID: latestSnapshot.requireID())
+        let tree = try await req.treeService.restore(treeID: treeID, snapshotID: latestSnapshot.requireID())
+
+        return try await .init(tree, on: req.db)
     }
 
     func getSnapshot(req: Request) async throws -> TreeSnapshot.DTO.Send {
@@ -94,11 +96,13 @@ struct TreeController: RouteCollection {
         return try await .init(snapshot, req.db)
     }
 
-    func restoreSnapshot(req: Request) async throws -> Tree {
+    func restoreSnapshot(req: Request) async throws -> Tree.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
         let snapshotID = try req.parameters.require("snapshotID", as: UUID.self)
 
-        return try await req.treeService.restore(treeID: treeID, snapshotID: snapshotID)
+        let tree = try await req.treeService.restore(treeID: treeID, snapshotID: snapshotID)
+
+        return try await .init(tree, on: req.db)
     }
 
     func byID(req: Request) async throws -> Tree.DTO.Send {
