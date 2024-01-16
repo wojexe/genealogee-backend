@@ -11,8 +11,13 @@ extension PeopleService {
         case let .partner(partnerID): partnerID
         }
 
-        let people = try await req.people
-            .using(db)
+        let personRepository = if let people = req.people as? DatabasePersonRepository {
+            people.using(db)
+        } else {
+            req.people
+        }
+
+        let people = try await personRepository
             .byIDs([personID, relativeID])
             .with(\.$tree)
             .with(\.$family)

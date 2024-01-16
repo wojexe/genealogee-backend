@@ -5,9 +5,19 @@ extension FamiliesService {
     func addParents(familyID: UUID, parentIDs: [UUID], on db: Database? = nil) async throws {
         let db = db ?? req.db
 
-        guard let family = try await req
-            .families
-            .using(db)
+        let familyRepository = if let families = req.families as? DatabaseFamilyRepository {
+            families.using(db)
+        } else {
+            req.families
+        }
+
+        let personRepository = if let people = req.people as? DatabasePersonRepository {
+            people.using(db)
+        } else {
+            req.people
+        }
+
+        guard let family = try await familyRepository
             .byID(familyID)
             .with(\.$tree)
             .with(\.$parents)
@@ -16,9 +26,7 @@ extension FamiliesService {
             throw Abort(.notFound, reason: "Family with ID '\(familyID)' not found")
         }
 
-        let parents = try await req
-            .people
-            .using(db)
+        let parents = try await personRepository
             .byIDs(parentIDs)
             .filter(\.$tree.$id == family.tree.requireID())
             .all()

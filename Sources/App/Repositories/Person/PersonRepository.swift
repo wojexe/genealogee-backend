@@ -13,8 +13,6 @@ protocol PersonRepository {
 
     init(req: Request, db: Database?)
 
-    func using(_ db: Database) -> Self
-
     func scoped(by scope: PersonRepositoryScope) throws -> QueryBuilder<Person>
 
     func byID(_ id: UUID) throws -> QueryBuilder<Person>

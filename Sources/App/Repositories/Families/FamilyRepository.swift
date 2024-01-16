@@ -19,8 +19,6 @@ protocol FamilyRepository {
 
     init(req: Request, db: Database?)
 
-    func using(_ db: Database) -> Self
-
     func scoped(by scope: FamilyRepositoryScope) throws -> QueryBuilder<Family>
     func byID(_ id: UUID) throws -> QueryBuilder<Family>
 

@@ -12,8 +12,6 @@ protocol TreeRepository {
 
     init(req: Request, db: Database?)
 
-    func using(_ db: Database) -> Self
-
     func scoped(by scope: TreeRepositoryScope) throws -> QueryBuilder<Tree>
     func byID(_ id: UUID) throws -> QueryBuilder<Tree>
 
