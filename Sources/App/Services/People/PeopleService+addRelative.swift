@@ -11,11 +11,7 @@ extension PeopleService {
         case let .partner(partnerID): partnerID
         }
 
-        let personRepository = if let people = req.people as? DatabasePersonRepository {
-            people.using(db)
-        } else {
-            req.people
-        }
+        let personRepository = getPersonRepository(db)
 
         let people = try await personRepository
             .byIDs([personID, relativeID])
@@ -49,7 +45,7 @@ extension PeopleService {
             }
 
             guard let family else {
-                throw Abort(.internalServerError, reason: "Could not add relative to family")
+                throw Abort(.internalServerError, reason: "Could not create family")
             }
 
             try await req.familiesService.addRelative(familyID: family.requireID(), relative, on: db)

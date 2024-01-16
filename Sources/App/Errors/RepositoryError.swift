@@ -3,12 +3,15 @@ import Vapor
 
 enum RepositoryError: AppError {
     case notFound(UUID, (any Model.Type)?)
+    case notFoundMultiple([UUID], (any Model.Type)?)
 }
 
 extension RepositoryError: AbortError {
     var status: HTTPStatus {
         switch self {
         case .notFound(_, _):
+            .notFound
+        case .notFoundMultiple(_, _):
             .notFound
         }
     }
@@ -21,6 +24,12 @@ extension RepositoryError: AbortError {
                 } else {
                     return "Resource#\(id) not found"
                 }
+            case let .notFoundMultiple(ids, model):
+                if let model = model {
+                    return "At least one of \(model)(\(ids)) not found"
+                } else {
+                    return "At least one of Resource#\(ids) not found"
+                }
         }
     }
 
@@ -28,6 +37,8 @@ extension RepositoryError: AbortError {
         switch self {
         case .notFound(_, _):
             "resource_not_found"
+        case .notFoundMultiple(_, _):
+            "resource_not_found_multiple"
         }
     }
 }

@@ -5,9 +5,9 @@ extension FamiliesService {
     func addRelative(familyID: UUID, _ relative: Relation, on db: Database? = nil) async throws {
         switch relative {
         case let .child(childID):
-            try await addChild(familyID: familyID, childID: childID, on: db ?? req.db)
+            try await addRelatives(familyID: familyID, .children([childID]), on: db ?? req.db)
         case let .partner(partnerID):
-            try await addParent(familyID: familyID, parentID: partnerID, on: db ?? req.db)
+            try await addRelatives(familyID: familyID, .parents([partnerID]), on: db ?? req.db)
         }
     }
 }

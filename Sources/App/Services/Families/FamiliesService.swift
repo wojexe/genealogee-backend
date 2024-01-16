@@ -1,6 +1,7 @@
 import Vapor
+import Fluent
 
-struct FamiliesService {
+struct FamiliesService: RequestService {
     let req: Request
 }
 

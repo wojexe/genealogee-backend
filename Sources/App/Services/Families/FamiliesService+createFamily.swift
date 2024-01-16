@@ -13,12 +13,12 @@ extension FamiliesService {
 
         if !children.isEmpty {
             req.logger.info("Adding children to family \(family.id!)")
-            try await req.familiesService.addChildren(familyID: family.requireID(), childIDs: children, on: db)
+            try await req.familiesService.addRelatives(familyID: family.requireID(), .children(children), on: db)
         }
 
         if !parents.isEmpty {
             req.logger.info("Adding parents to family \(family.id!)")
-            try await req.familiesService.addParents(familyID: family.requireID(), parentIDs: parents, on: db)
+            try await req.familiesService.addRelatives(familyID: family.requireID(), .parents(parents), on: db)
         }
 
         return family

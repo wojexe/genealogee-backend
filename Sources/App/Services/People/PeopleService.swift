@@ -1,6 +1,6 @@
 import Vapor
 
-struct PeopleService {
+struct PeopleService: RequestService {
     let req: Request
 }
 

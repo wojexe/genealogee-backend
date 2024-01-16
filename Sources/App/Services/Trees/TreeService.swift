@@ -1,6 +1,6 @@
 import Vapor
 
-struct TreeService {
+struct TreeService: RequestService {
     let req: Request
 }
 
