@@ -28,7 +28,7 @@ extension DatabaseTreeSnapshotRepository {
             .filter(\.$id == id)
 
         guard let result = try await query.first() else {
-            throw Abort(.notFound, reason: "No such tree snapshot exists")
+            throw RepositoryError.notFound(id, TreeSnapshot.self)
         }
 
         return result

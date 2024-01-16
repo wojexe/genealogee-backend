@@ -9,7 +9,7 @@ extension DatabaseTreeRepository {
             .with(\.$snapshots)
 
         guard let result = try await query.first() else {
-            throw Abort(.notFound, reason: "Tree#\(id) not found")
+            throw RepositoryError.notFound(id, Tree.self)
         }
 
         return result
