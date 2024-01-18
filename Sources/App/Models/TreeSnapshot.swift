@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-final class TreeSnapshot: Model, Content {
+final class TreeSnapshot: Model {
     static let schema = "tree_snapshots"
 
     @ID

@@ -35,9 +35,6 @@ final class Person: Model, Content {
     @Siblings(through: ChildLink.self, from: \.$id.$person, to: \.$id.$family)
     var parentFamily: [Family]
 
-    @Timestamp(key: "deleted_at", on: .delete)
-    var deletedAt: Date?
-
     init() {}
 
     init(id: UUID? = nil,
@@ -100,13 +97,5 @@ final class Dates: Fields, Content {
         self.birthCustom = birthCustom
         self.death = death
         self.deathCustom = deathCustom
-    }
-
-    func birthString() -> String? {
-        birth?.formatted() ?? birthCustom
-    }
-
-    func deathString() -> String? {
-        death?.formatted() ?? deathCustom
     }
 }
