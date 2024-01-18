@@ -9,7 +9,7 @@ enum CreateMigrations {
             CreateFamily(),
             CreateParentLink(),
             CreateChildLink(),
-            AddRootFamilyId(),
+            AddRootFamilyID(),
             CreateTreeSnapshot(),
         ]
     }
