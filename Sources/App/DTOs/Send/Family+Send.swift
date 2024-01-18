@@ -11,16 +11,14 @@ extension Family.DTO {
 
         init(_ family: Family, on db: Database) async throws {
             let family = try await Family.query(on: db)
-                .with(\.$creator)
-                .with(\.$tree)
+                .filter(\.$id == family.requireID())
                 .with(\.$parents)
                 .with(\.$children)
-                .filter(\.$id == family.requireID())
                 .first()!
 
             id = try family.requireID()
-            creatorID = try family.creator.requireID()
-            treeID = try family.tree.requireID()
+            creatorID = family.$creator.id
+            treeID = family.$tree.id
             parents = try family.parents.map { try $0.requireID() }
             children = try family.children.map { try $0.requireID() }
         }

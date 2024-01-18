@@ -25,8 +25,8 @@ extension Tree.DTO {
             let families = try await tree.$families.get(on: db)
             var DTOs: [Family.DTO.Send] = []
 
-            for a_family in families {
-                try await DTOs.append(Family.DTO.Send(a_family, on: db))
+            for family in families {
+                try await DTOs.append(Family.DTO.Send(family, on: db))
             }
 
             return DTOs
