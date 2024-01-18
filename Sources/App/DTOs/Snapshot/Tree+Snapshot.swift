@@ -1,12 +1,12 @@
 import Fluent
 import Vapor
 
-extension Tree {
+extension Tree.DTO {
     struct Snapshot: Codable {
         let sourceTreeID: UUID
         let name: String
-        let people: [Person.Snapshot]
-        let families: [Family.Snapshot]
+        let people: [Person.DTO.Snapshot]
+        let families: [Family.DTO.Snapshot]
         let rootFamilyID: UUID
 
         init(from tree: Tree, on db: Database) async throws {
@@ -20,16 +20,16 @@ extension Tree {
 
             sourceTreeID = try tree.requireID()
             name = tree.name
-            people = try tree.people.map(Person.Snapshot.init)
+            people = try tree.people.map(Person.DTO.Snapshot.init)
             families = try await Self.snapshotFamilies(tree.families, on: db)
             rootFamilyID = try tree.rootFamilyID ?! Abort(.internalServerError, reason: "Tree has no root family")
         }
 
-        static func snapshotFamilies(_ families: [Family], on db: Database) async throws -> [Family.Snapshot] {
-            var snapshots: [Family.Snapshot] = []
+        static func snapshotFamilies(_ families: [Family], on db: Database) async throws -> [Family.DTO.Snapshot] {
+            var snapshots: [Family.DTO.Snapshot] = []
 
             for family in families {
-                let snapshot = try! await Family.Snapshot(from: family, on: db)
+                let snapshot = try! await Family.DTO.Snapshot(from: family, on: db)
                 snapshots.append(snapshot)
             }
 

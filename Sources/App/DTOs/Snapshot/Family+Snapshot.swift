@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-extension Family {
+extension Family.DTO {
     struct Snapshot: Codable {
         let sourceFamilyID: UUID
         let parentIDs: [UUID]

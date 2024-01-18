@@ -43,11 +43,11 @@ final class Tree: Model, Content {
         try await delete(on: db)
     }
 
-    func snapshot(on db: Database) async throws -> Tree.Snapshot {
-        try await Tree.Snapshot(from: self, on: db)
+    func snapshot(on db: Database) async throws -> Tree.DTO.Snapshot {
+        try await Tree.DTO.Snapshot(from: self, on: db)
     }
 
-    func restore(from snapshot: Tree.Snapshot, on db: Database) async throws {
+    func restore(from snapshot: Tree.DTO.Snapshot, on db: Database) async throws {
         let treeID = try requireID()
 
         try await db.transaction { db in
@@ -77,7 +77,7 @@ final class Tree: Model, Content {
     }
 
     /// Retuns a mapping of source IDs to the restored people objects
-    private func restorePeople(_ people: [Person.Snapshot],
+    private func restorePeople(_ people: [Person.DTO.Snapshot],
                                treeID: UUID,
                                on db: Database) async throws -> [UUID: Person]
     {
@@ -92,7 +92,7 @@ final class Tree: Model, Content {
     }
 
     /// Returns a mapping of source IDs to the restored family objects
-    private func restoreFamilies(_ familySnapshots: [Family.Snapshot],
+    private func restoreFamilies(_ familySnapshots: [Family.DTO.Snapshot],
                                  _ people: [UUID: Person],
                                  treeID: UUID,
                                  on db: Database) async throws -> [UUID: Family]

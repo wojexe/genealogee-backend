@@ -14,7 +14,7 @@ final class TreeSnapshot: Model {
     var tree: Tree
 
     @Field(key: "snapshot_data")
-    var snapshotData: Tree.Snapshot
+    var snapshotData: Tree.DTO.Snapshot
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -24,7 +24,7 @@ final class TreeSnapshot: Model {
     init(id: UUID? = nil,
          creatorID: UUID,
          treeID: UUID,
-         snapshotData: Tree.Snapshot,
+         snapshotData: Tree.DTO.Snapshot,
          createdAt: Date? = Date.now)
     {
         self.id = id

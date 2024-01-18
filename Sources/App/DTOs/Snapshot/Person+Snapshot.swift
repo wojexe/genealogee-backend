@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension Person {
-    convenience init(from snapshot: Snapshot, treeID: UUID, creatorID: UUID) {
+    convenience init(from snapshot: DTO.Snapshot, treeID: UUID, creatorID: UUID) {
         self.init(creatorID: creatorID,
                   treeID: treeID,
                   givenNames: snapshot.givenNames,
@@ -10,13 +10,15 @@ extension Person {
                   birthName: snapshot.birthName,
                   dateOf: Dates(from: snapshot.dateOf))
     }
+}
 
+extension Person.DTO {
     struct Snapshot: Codable {
         let sourcePersonID: UUID
         let givenNames: String
         let familyName: String
         let birthName: String?
-        let dateOf: Dates.Snapshot
+        let dateOf: Dates.DTO.Snapshot
 
         init(from person: Person) throws {
             sourcePersonID = try person.requireID()
@@ -29,7 +31,7 @@ extension Person {
 }
 
 extension Dates {
-    convenience init(from snapshot: Snapshot) {
+    convenience init(from snapshot: DTO.Snapshot) {
         let formatter = ISO8601DateFormatter()
 
         self.init(birth: snapshot.birth != nil ? formatter.date(from: snapshot.birth!) : nil,
@@ -37,7 +39,9 @@ extension Dates {
                   death: snapshot.death != nil ? formatter.date(from: snapshot.death!) : nil,
                   deathCustom: snapshot.deathCustom)
     }
+}
 
+extension Dates.DTO {
     struct Snapshot: Content {
         let birth: String?
         let birthCustom: String?

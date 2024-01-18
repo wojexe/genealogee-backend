@@ -6,7 +6,7 @@ extension TreeSnapshot.DTO {
         let id: UUID
         let creatorID: UUID
         let treeID: UUID
-        let snapshotData: Tree.Snapshot
+        let snapshotData: Tree.DTO.Snapshot
         let createdAt: Date
 
         init(_ snapshot: TreeSnapshot, on db: Database) async throws {

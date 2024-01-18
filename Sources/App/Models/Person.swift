@@ -98,4 +98,6 @@ final class Dates: Fields, Content {
         self.death = death
         self.deathCustom = deathCustom
     }
+
+    struct DTO {}
 }
