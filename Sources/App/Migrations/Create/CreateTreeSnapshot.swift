@@ -5,7 +5,7 @@ struct CreateTreeSnapshot: AsyncMigration {
         try await db.schema("tree_snapshots")
             .id()
             .field("creator_id", .uuid, .required)
-            .field("tree_id", .uuid, .required)
+            .field("tree_id", .uuid, .required, .references("trees", "id", onDelete: .cascade))
             .field("snapshot_data", .json, .required)
             .field("created_at", .datetime, .required)
             .field("deleted_at", .datetime)
