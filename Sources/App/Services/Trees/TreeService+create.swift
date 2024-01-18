@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension TreeService {
-    func create(from data: Tree.Create) async throws -> Tree.Created {
+    func create(from data: Tree.Create) async throws -> Tree {
         let user = try req.auth.require(User.self)
         let userID = try user.requireID()
 
@@ -10,6 +10,6 @@ extension TreeService {
 
         try await tree.save(on: req.db)
 
-        return try Tree.Created(tree)
+        return tree
     }
 }

@@ -9,7 +9,7 @@ extension TreeSnapshot.DTO {
         let snapshotData: Tree.Snapshot
         let createdAt: Date
 
-        init(_ snapshot: TreeSnapshot, _ db: Database) async throws {
+        init(_ snapshot: TreeSnapshot, on db: Database) async throws {
             id = try snapshot.requireID()
             creatorID = try await snapshot.$creator.get(on: db).requireID()
             treeID = try await snapshot.$tree.get(on: db).requireID()

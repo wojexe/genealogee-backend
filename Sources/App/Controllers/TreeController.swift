@@ -48,13 +48,13 @@ struct TreeController: RouteCollection {
 
         let treeData = try await Tree.Create.decodeRequest(req)
 
-        return try await req.treeService.create(from: treeData)
+        return try await .init(req.treeService.create(from: treeData))
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
-        try await req.treeService.deleteTree(treeID)
+        try await req.treeService.delete(treeID)
 
         return .ok
     }
@@ -62,15 +62,18 @@ struct TreeController: RouteCollection {
     func createSnapshot(req: Request) async throws -> TreeSnapshot.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
-        return try await req.treeService.createSnapshot(treeID)
+        return try await .init(
+            req.treeService.snapshot(treeID),
+            on: req.db
+        )
     }
 
     func getLatestSnapshot(req: Request) async throws -> TreeSnapshot.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
-        let latestSnapshot = try await req.treeSnapshots.get(by: .treeID(treeID))
+        let snapshot = try await req.treeSnapshots.get(by: .treeID(treeID))
 
-        return try await .init(latestSnapshot, req.db)
+        return try await .init(snapshot, on: req.db)
     }
 
     func restoreLatestSnapshot(req: Request) async throws -> Tree.DTO.Send {
@@ -93,7 +96,7 @@ struct TreeController: RouteCollection {
             throw Abort(.notFound, reason: "Snapshot does not belong to tree")
         }
 
-        return try await .init(snapshot, req.db)
+        return try await .init(snapshot, on: req.db)
     }
 
     func restoreSnapshot(req: Request) async throws -> Tree.DTO.Send {

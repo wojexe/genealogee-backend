@@ -17,13 +17,16 @@ struct PersonController: RouteCollection {
 
         let data = try await Person.Create.decodeRequest(req)
 
-        return try await req.peopleService.createPerson(from: data)
+        return try await .init(
+            req.peopleService.create(from: data),
+            req.db
+        )
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
         let personID = try req.parameters.require("personID", as: UUID.self)
 
-        try await req.peopleService.deletePerson(personID)
+        try await req.peopleService.delete(personID)
 
         return .ok
     }
@@ -40,14 +43,20 @@ struct PersonController: RouteCollection {
         let personID = try req.parameters.require("personID", as: UUID.self)
         let partnerID = try req.parameters.require("partnerID", as: UUID.self)
 
-        return try await req.peopleService.addRelative(personID: personID, .partner(partnerID))
+        return try await .init(
+            req.peopleService.addRelative(personID: personID, .partner(partnerID)),
+            on: req.db
+        )
     }
 
     func child(req: Request) async throws -> Family.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
         let childID = try req.parameters.require("childID", as: UUID.self)
 
-        return try await req.peopleService.addRelative(personID: personID, .child(childID))
+        return try await .init(
+            req.peopleService.addRelative(personID: personID, .child(childID)),
+            on: req.db
+        )
     }
 
     // MARK: - Development

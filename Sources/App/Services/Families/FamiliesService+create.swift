@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension FamiliesService {
-    func createFamily(treeID: UUID, parents: [UUID] = [], children: [UUID] = [], on db: Database?) async throws -> Family {
+    func create(treeID: UUID, parents: [UUID] = [], children: [UUID] = [], on db: Database?) async throws -> Family {
         let db = db ?? req.db
 
         let userID = try req.auth.require(User.self).requireID()

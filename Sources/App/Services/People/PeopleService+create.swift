@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension PeopleService {
-    func createPerson(from data: Person.Create, on db: Database? = nil) async throws -> Person.Created {
+    func create(from data: Person.Create, on db: Database? = nil) async throws -> Person {
         let user = try req.auth.require(User.self)
 
         guard let person = try? Person(from: data, creatorID: user.requireID()) else {
@@ -27,7 +27,7 @@ extension PeopleService {
 
                 let family = try await req
                     .familiesService
-                    .createFamily(treeID: tree.requireID(), parents: [person.requireID()], on: db)
+                    .create(treeID: tree.requireID(), parents: [person.requireID()], on: db)
 
                 tree.rootFamilyID = try family.requireID()
 
@@ -55,6 +55,6 @@ extension PeopleService {
             }
         }
 
-        return try await Person.Created(person, req.db)
+        return person
     }
 }

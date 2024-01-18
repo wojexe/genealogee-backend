@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension TreeService {
-    func createSnapshot(_ treeID: UUID) async throws -> TreeSnapshot.DTO.Send {
+    func snapshot(_ treeID: UUID) async throws -> TreeSnapshot {
         let user = try req.auth.require(User.self)
 
         let tree = try await req.trees.get(id: treeID)
@@ -17,6 +17,6 @@ extension TreeService {
 
         try await treeSnapshot.save(on: req.db)
 
-        return try await .init(treeSnapshot, req.db)
+        return treeSnapshot
     }
 }

@@ -3,7 +3,7 @@ import Vapor
 
 extension PeopleService {
     @discardableResult
-    func addRelative(personID: UUID, _ relative: Relation, on db: Database? = nil) async throws -> Family.DTO.Send {
+    func addRelative(personID: UUID, _ relative: Relation, on db: Database? = nil) async throws -> Family {
         let db = db ?? req.db
 
         let relativeID = switch relative {
@@ -39,7 +39,7 @@ extension PeopleService {
 
                 family = try await req
                     .familiesService
-                    .createFamily(treeID: personWithFamily.tree.requireID(),
+                    .create(treeID: personWithFamily.tree.requireID(),
                                   parents: [personWithFamily.requireID()],
                                   on: db)
             }
@@ -53,6 +53,6 @@ extension PeopleService {
             return family
         }
 
-        return try await Family.DTO.Send(family, on: db)
+        return family
     }
 }
