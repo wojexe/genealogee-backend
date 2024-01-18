@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-extension Family {
+extension Family.DTO {
     struct Created: Content {
         var id: UUID
         var parents: [UUID]

@@ -12,7 +12,7 @@ struct PersonController: RouteCollection {
         routes.get("people", use: all)
     }
 
-    func create(req: Request) async throws -> Person.Created {
+    func create(req: Request) async throws -> Person.DTO.Created {
         try Person.Create.validate(content: req)
 
         let data = try await Person.Create.decodeRequest(req)

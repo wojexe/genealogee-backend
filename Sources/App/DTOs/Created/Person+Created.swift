@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-extension Person {
+extension Person.DTO {
     struct Created: Content {
         var id: UUID
         var creatorID: UUID

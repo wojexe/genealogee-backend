@@ -43,7 +43,7 @@ struct TreeController: RouteCollection {
         routes.delete("trees", use: nukeAllTrees)
     }
 
-    func create(req: Request) async throws -> Tree.Created {
+    func create(req: Request) async throws -> Tree.DTO.Created {
         try Tree.validate(content: req)
 
         let treeData = try await Tree.Create.decodeRequest(req)

@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-extension Tree {
+extension Tree.DTO {
     struct Created: Content {
         var id: UUID
         var name: String
