@@ -1,4 +1,3 @@
-import Fluent
 import Vapor
 
 struct FamilyController: RouteCollection {
