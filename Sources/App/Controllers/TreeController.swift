@@ -46,7 +46,7 @@ struct TreeController: RouteCollection {
     func create(req: Request) async throws -> Tree.DTO.Created {
         try Tree.validate(content: req)
 
-        let treeData = try await Tree.Create.decodeRequest(req)
+        let treeData = try await Tree.DTO.Create.decodeRequest(req)
 
         return try await .init(req.treeService.create(from: treeData))
     }

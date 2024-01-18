@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension Person {
-    convenience init(from createRequest: Create, creatorID: UUID) throws {
+    convenience init(from createRequest: DTO.Create, creatorID: UUID) throws {
         self.init(creatorID: creatorID,
                   treeID: createRequest.treeID,
                   givenNames: createRequest.givenNames,
@@ -10,6 +10,9 @@ extension Person {
                   birthName: createRequest.birthName,
                   dateOf: createRequest.dateOf)
     }
+}
+
+extension Person.DTO {
 
     final class Create: Content, Validatable {
         var treeID: UUID

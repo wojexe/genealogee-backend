@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension PeopleService {
-    func create(from data: Person.Create, on db: Database? = nil) async throws -> Person {
+    func create(from data: Person.DTO.Create, on db: Database? = nil) async throws -> Person {
         let user = try req.auth.require(User.self)
 
         guard let person = try? Person(from: data, creatorID: user.requireID()) else {

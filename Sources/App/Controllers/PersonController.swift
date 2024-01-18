@@ -13,9 +13,9 @@ struct PersonController: RouteCollection {
     }
 
     func create(req: Request) async throws -> Person.DTO.Created {
-        try Person.Create.validate(content: req)
+        try Person.DTO.Create.validate(content: req)
 
-        let data = try await Person.Create.decodeRequest(req)
+        let data = try await Person.DTO.Create.decodeRequest(req)
 
         return try await .init(
             req.peopleService.create(from: data),
