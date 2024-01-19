@@ -12,14 +12,14 @@ struct PersonController: RouteCollection {
         routes.get("people", use: all)
     }
 
-    func create(req: Request) async throws -> Person.DTO.Created {
+    func create(req: Request) async throws -> Person.DTO.Send {
         try Person.DTO.Create.validate(content: req)
 
         let data = try await Person.DTO.Create.decodeRequest(req)
 
         return try await .init(
             req.peopleService.create(from: data),
-            req.db
+            on: req.db
         )
     }
 
@@ -34,7 +34,10 @@ struct PersonController: RouteCollection {
     func byID(req: Request) async throws -> Person.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
 
-        return try await .init(req.people.get(personID))
+        return try await .init(
+            req.people.get(personID),
+            on: req.db
+        )
     }
 
     // MARK: - Connections (currently unavailable)

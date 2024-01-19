@@ -43,12 +43,15 @@ struct TreeController: RouteCollection {
         routes.delete("trees", use: nukeAllTrees)
     }
 
-    func create(req: Request) async throws -> Tree.DTO.Created {
+    func create(req: Request) async throws -> Tree.DTO.Send {
         try Tree.validate(content: req)
 
         let treeData = try await Tree.DTO.Create.decodeRequest(req)
 
-        return try await .init(req.treeService.create(from: treeData))
+        return try await .init(
+            req.treeService.create(from: treeData),
+            on: req.db
+        )
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
@@ -73,7 +76,7 @@ struct TreeController: RouteCollection {
 
         let snapshot = try await req.treeSnapshots.get(by: .treeID(treeID))
 
-        return try await .init(snapshot, on: req.db)
+        return try .init(snapshot, on: req.db)
     }
 
     func restoreLatestSnapshot(req: Request) async throws -> Tree.DTO.Send {
@@ -96,7 +99,7 @@ struct TreeController: RouteCollection {
             throw Abort(.notFound, reason: "Snapshot does not belong to tree")
         }
 
-        return try await .init(snapshot, on: req.db)
+        return try .init(snapshot, on: req.db)
     }
 
     func restoreSnapshot(req: Request) async throws -> Tree.DTO.Send {

@@ -21,9 +21,9 @@ struct AuthenticationController: RouteCollection {
     }
 
     func register(req: Request) async throws -> HTTPStatus {
-        try User.DTO.Register.validate(content: req)
+        try User.DTO.Create.validate(content: req)
 
-        let registerRequest = try req.content.decode(User.DTO.Register.self)
+        let registerRequest = try req.content.decode(User.DTO.Create.self)
 
         let passwordHash = try await req.password.async.hash(registerRequest.password)
 

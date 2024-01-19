@@ -53,8 +53,8 @@ final class Tree: Model, Content {
         try await db.transaction { db in
             self.$name.value = snapshot.name
 
-            try await Family.query(on: db).filter(\.$tree.$id == treeID).delete()
-            try await Person.query(on: db).filter(\.$tree.$id == treeID).delete()
+            try await self.$people.query(on: db).delete()
+            try await self.$families.query(on: db).delete()
 
             guard let people = try? await self.restorePeople(snapshot.people, treeID: treeID, on: db) else {
                 throw Abort(.internalServerError, reason: "Error while restoring snapshot - people")
@@ -71,6 +71,8 @@ final class Tree: Model, Content {
             self.$people.value = people.map(\.value)
             self.$families.value = families.map(\.value)
             self.$rootFamilyID.value = try rootFamily.requireID()
+
+            // TODO: Make sure people and families have correct relations set to avoid refetching them
 
             try await self.update(on: db)
         }

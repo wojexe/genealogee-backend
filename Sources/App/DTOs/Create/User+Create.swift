@@ -2,7 +2,7 @@ import Fluent
 import Vapor
 
 extension User {
-    convenience init(from registerRequest: DTO.Register, hash: String) {
+    convenience init(from registerRequest: DTO.Create, hash: String) {
         self.init(email: registerRequest.email,
                   name: registerRequest.name,
                   passwordHash: hash)
@@ -10,7 +10,7 @@ extension User {
 }
 
 extension User.DTO {
-    struct Register: Content, Validatable {
+    struct Create: Content, Validatable {
         var email: String
         var name: String
         var password: String
