@@ -128,10 +128,3 @@ final class Tree: Model, Content {
 
     struct DTO {}
 }
-
-extension Tree: Validatable {
-    static func validations(_ val: inout Validations) {
-        val.add("name", as: String.self, is: .count(...64))
-        val.add("rootFamilyID", as: UUID.self, required: false)
-    }
-}

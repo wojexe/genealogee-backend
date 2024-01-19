@@ -12,8 +12,9 @@ extension Tree.DTO {
     struct Create: Content, Validatable {
         var name: String
 
-        static func validations(_ validations: inout Validations) {
-            validations.add("name", as: String.self, is: .count(...128))
+        static func validations(_ val: inout Validations) {
+            val.add("name", as: String.self, is: .count(...128))
+            val.add("rootFamilyID", as: UUID.self, required: false)
         }
     }
 }

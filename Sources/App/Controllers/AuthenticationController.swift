@@ -51,6 +51,6 @@ struct AuthenticationController: RouteCollection {
     func getCurrentUser(req: Request) throws -> User.DTO.Send {
         let user = try req.auth.require(User.self)
 
-        return .init(from: user)
+        return try .init(from: user)
     }
 }

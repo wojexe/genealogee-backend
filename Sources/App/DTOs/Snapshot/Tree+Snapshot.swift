@@ -25,7 +25,7 @@ extension Tree.DTO {
             rootFamilyID = try tree.rootFamilyID ?! Abort(.internalServerError, reason: "Tree has no root family")
         }
 
-        static func snapshotFamilies(_ families: [Family], on db: Database) async throws -> [Family.DTO.Snapshot] {
+        private static func snapshotFamilies(_ families: [Family], on db: Database) async throws -> [Family.DTO.Snapshot] {
             var snapshots: [Family.DTO.Snapshot] = []
 
             for family in families {
