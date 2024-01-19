@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-extension TreeService {
+extension TreesService {
     func restore(treeID: UUID, snapshotID: UUID, on db: Database? = nil) async throws -> Tree {
         req.logger.info("Restoring tree \(treeID) from snapshot \(snapshotID)")
         defer { req.logger.info("Tree \(treeID) restored from snapshot \(snapshotID)") }

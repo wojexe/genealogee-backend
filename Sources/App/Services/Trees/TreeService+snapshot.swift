@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-extension TreeService {
+extension TreesService {
     func snapshot(_ treeID: UUID) async throws -> TreeSnapshot {
         let user = try req.auth.require(User.self)
 

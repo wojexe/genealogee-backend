@@ -1,11 +1,11 @@
 import Vapor
 
-struct TreeService: RequestService {
+struct TreesService: RequestService {
     let req: Request
 }
 
 extension Request {
-    var treeService: TreeService {
+    var treesService: TreesService {
         .init(req: self)
     }
 }

@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-extension TreeService {
+extension TreesService {
     func create(from data: Tree.DTO.Create) async throws -> Tree {
         let user = try req.auth.require(User.self)
         let userID = try user.requireID()

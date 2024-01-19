@@ -49,7 +49,7 @@ struct TreeController: RouteCollection {
         let treeData = try await Tree.DTO.Create.decodeRequest(req)
 
         return try await .init(
-            req.treeService.create(from: treeData),
+            req.treesService.create(from: treeData),
             on: req.db
         )
     }
@@ -57,7 +57,7 @@ struct TreeController: RouteCollection {
     func delete(req: Request) async throws -> HTTPStatus {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
-        try await req.treeService.delete(treeID)
+        try await req.treesService.delete(treeID)
 
         return .ok
     }
@@ -66,7 +66,7 @@ struct TreeController: RouteCollection {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
         return try await .init(
-            req.treeService.snapshot(treeID),
+            req.treesService.snapshot(treeID),
             on: req.db
         )
     }
@@ -84,7 +84,7 @@ struct TreeController: RouteCollection {
 
         let latestSnapshot = try await req.treeSnapshots.get(by: .treeID(treeID))
 
-        let tree = try await req.treeService.restore(treeID: treeID, snapshotID: latestSnapshot.requireID())
+        let tree = try await req.treesService.restore(treeID: treeID, snapshotID: latestSnapshot.requireID())
 
         return try await .init(tree, on: req.db)
     }
@@ -106,7 +106,7 @@ struct TreeController: RouteCollection {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
         let snapshotID = try req.parameters.require("snapshotID", as: UUID.self)
 
-        let tree = try await req.treeService.restore(treeID: treeID, snapshotID: snapshotID)
+        let tree = try await req.treesService.restore(treeID: treeID, snapshotID: snapshotID)
 
         return try await .init(tree, on: req.db)
     }
