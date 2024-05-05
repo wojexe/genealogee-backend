@@ -54,19 +54,18 @@ final class Person: Model, Content {
         self.dateOf = dateOf
     }
 
-    func nuke(on db: Database) async throws {
+    func nuke(withFamily: Bool = false, on db: Database) async throws {
         try await db.transaction { db in
             let family = try await self.$family.get(on: db)
             let parents = try await family.$parents.get(on: db)
 
-            if parents.count == 1 {
+            if withFamily || parents.count == 1 {
                 try await family.nuke(on: db)
             } else {
                 try await self.delete(on: db)
             }
         }
     }
-
     struct DTO {}
 }
 

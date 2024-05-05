@@ -37,7 +37,7 @@ final class Family: Model, Content {
             try await parents.delete(on: db)
 
             for child in children {
-                try await child.nuke(on: db)
+                try await child.nuke(withFamily: true, on: db)
             }
 
             if (tree.rootFamilyID == self.id) {
