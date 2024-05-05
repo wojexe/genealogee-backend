@@ -7,6 +7,7 @@ struct PersonController: RouteCollection {
 
         let certainPerson = person.grouped(":personID")
         certainPerson.get(use: byID)
+        certainPerson.patch(use: update)
         certainPerson.delete(use: delete)
 
         routes.get("people", use: all)
@@ -19,6 +20,19 @@ struct PersonController: RouteCollection {
 
         return try await .init(
             req.peopleService.create(from: data),
+            on: req.db
+        )
+    }
+
+    func update(req: Request) async throws -> Person.DTO.Send {
+        let personID = try req.parameters.require("personID", as: UUID.self)
+
+        try Person.DTO.Update.validate(content: req)
+
+        let data = try await Person.DTO.Update.decodeRequest(req)
+
+        return try await .init(
+            req.peopleService.update(personID, data),
             on: req.db
         )
     }
