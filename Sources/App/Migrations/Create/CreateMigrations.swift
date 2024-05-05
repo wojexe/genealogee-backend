@@ -5,10 +5,8 @@ enum CreateMigrations {
         [
             CreateUser(),
             CreateTree(),
-            CreatePerson(),
             CreateFamily(),
-            CreateParentLink(),
-            CreateChildLink(),
+            CreatePerson(),
             AddRootFamilyID(),
             CreateTreeSnapshot(),
         ]

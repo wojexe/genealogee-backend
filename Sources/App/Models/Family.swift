@@ -13,10 +13,10 @@ final class Family: Model, Content {
     @Parent(key: "tree_id")
     var tree: Tree
 
-    @Siblings(through: ParentLink.self, from: \.$id.$family, to: \.$id.$person)
+    @Children(for: \.$family)
     var parents: [Person]
 
-    @Siblings(through: ChildLink.self, from: \.$id.$family, to: \.$id.$person)
+    @Children(for: \.$parentFamily)
     var children: [Person]
 
     init() {}
@@ -30,6 +30,7 @@ final class Family: Model, Content {
     /// Delete people at the parent level and all children recursively
     func nuke(on db: Database) async throws {
         try await db.transaction { db in
+            let tree = try await self.$tree.get(on: db)
             let parents = try await self.$parents.get(on: db)
             let children = try await self.$children.get(on: db)
 
@@ -37,6 +38,11 @@ final class Family: Model, Content {
 
             for child in children {
                 try await child.nuke(on: db)
+            }
+
+            if (tree.rootFamilyID == self.id) {
+                tree.rootFamilyID = nil
+                try await tree.save(on: db)
             }
 
             try await self.delete(on: db)

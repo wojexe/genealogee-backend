@@ -2,13 +2,20 @@ import Fluent
 import Vapor
 
 extension Person {
-    convenience init(from createRequest: DTO.Create, creatorID: UUID) throws {
+    convenience init(from createRequest: DTO.Create,
+                     creatorID: UUID,
+                     familyID: UUID,
+                     parentFamilyID: UUID? = nil) throws
+    {
         self.init(creatorID: creatorID,
                   treeID: createRequest.treeID,
+                  familyID: familyID,
+                  parentFamilyID: parentFamilyID,
                   givenNames: createRequest.givenNames,
                   familyName: createRequest.familyName,
                   birthName: createRequest.birthName,
-                  dateOf: createRequest.dateOf)
+                  dateOf: createRequest.dateOf
+                  )
     }
 }
 

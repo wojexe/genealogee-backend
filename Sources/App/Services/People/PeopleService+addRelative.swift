@@ -17,7 +17,6 @@ extension PeopleService {
             .byIDs([personID, relativeID])
             .with(\.$tree)
             .with(\.$family)
-            .with(\.$parentFamily)
             .all()
 
         guard people.count == 2 else {
@@ -32,21 +31,16 @@ extension PeopleService {
         }
 
         let family = try await db.transaction { db in
-            if personWithFamily.family.first == nil {
-                req.logger.info("Person does not have a family, creating one")
+            let family = personWithFamily.family
 
-                personWithFamily.$family.value = try await [
-                    req
-                        .familiesService
-                        .create(treeID: personWithFamily.tree.requireID(),
-                                parents: [personWithFamily.requireID()],
-                                on: db),
-                ]
+            switch relative {
+            case .child:
+                personToBeAttached.parentFamily = family
+            case .partner:
+                personToBeAttached.family = family
             }
 
-            let family = personWithFamily.family.first!
-
-            try await req.familiesService.addRelative(familyID: family.requireID(), relative, on: db)
+            try await personToBeAttached.update(on: db)
 
             return family
         }

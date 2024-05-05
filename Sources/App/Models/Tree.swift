@@ -56,12 +56,12 @@ final class Tree: Model, Content {
             try await self.$people.query(on: db).delete()
             try await self.$families.query(on: db).delete()
 
-            guard let people = try? await self.restorePeople(snapshot.people, treeID: treeID, on: db) else {
-                throw Abort(.internalServerError, reason: "Error while restoring snapshot - people")
+            guard let families = try? await self.restoreFamilies(snapshot.families, treeID: treeID, on: db) else {
+                throw Abort(.internalServerError, reason: "Error while restoring snapshot - families")
             }
 
-            guard let families = try? await self.restoreFamilies(snapshot.families, people, treeID: treeID, on: db) else {
-                throw Abort(.internalServerError, reason: "Error while restoring snapshot - families")
+            guard let people = try? await self.restorePeople(snapshot.people, families, treeID: treeID, on: db) else {
+                throw Abort(.internalServerError, reason: "Error while restoring snapshot - people")
             }
 
             guard let rootFamily = families[snapshot.rootFamilyID] else {
@@ -78,24 +78,8 @@ final class Tree: Model, Content {
         }
     }
 
-    /// Retuns a mapping of source IDs to the restored people objects
-    private func restorePeople(_ people: [Person.DTO.Snapshot],
-                               treeID: UUID,
-                               on db: Database) async throws -> [UUID: Person]
-    {
-        let people = people.reduce(into: [:]) { mapping, personSnapshot in
-            mapping[personSnapshot.sourcePersonID] =
-                Person(from: personSnapshot, treeID: treeID, creatorID: self.$creator.id)
-        }
-
-        try await people.map(\.value).create(on: db)
-
-        return people
-    }
-
     /// Returns a mapping of source IDs to the restored family objects
     private func restoreFamilies(_ familySnapshots: [Family.DTO.Snapshot],
-                                 _ people: [UUID: Person],
                                  treeID: UUID,
                                  on db: Database) async throws -> [UUID: Family]
     {
@@ -105,25 +89,32 @@ final class Tree: Model, Content {
 
         try await families.map(\.value).create(on: db)
 
-        var childLinks: [ChildLink] = []
-        var parentLinks: [ParentLink] = []
+        return families
+    }
 
-        for familySnapshot in familySnapshots {
-            let familyID = try families[familySnapshot.sourceFamilyID]!.requireID()
+    /// Retuns a mapping of source IDs to the restored people objects
+    private func restorePeople(_ people: [Person.DTO.Snapshot],
+                               _ families: [UUID: Family],
+                               treeID: UUID,
+                               on db: Database) async throws -> [UUID: Person]
+    {
+        let people: [UUID: Person] = try people.reduce(into: [:]) { mapping, personSnapshot in
+            let familyID = try families[personSnapshot.sourceFamilyID]!.requireID()
+            let parentFamilyID = try personSnapshot.sourceParentFamilyID != nil
+                ? families[personSnapshot.sourceParentFamilyID!]!.requireID()
+                : nil
 
-            childLinks += try familySnapshot.childIDs.map { childID in
-                try .init(familyID: familyID, personID: people[childID]!.requireID())
-            }
-
-            parentLinks += try familySnapshot.parentIDs.map { parentID in
-                try .init(familyID: familyID, personID: people[parentID]!.requireID())
-            }
+            mapping[personSnapshot.sourcePersonID] =
+                Person(from: personSnapshot,
+                       treeID: treeID,
+                       creatorID: self.$creator.id,
+                       familyID: familyID,
+                       parentFamilyID: parentFamilyID)
         }
 
-        try await childLinks.create(on: db)
-        try await parentLinks.create(on: db)
+        try await people.map(\.value).create(on: db)
 
-        return families
+        return people
     }
 
     struct DTO {}

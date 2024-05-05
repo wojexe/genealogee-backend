@@ -6,56 +6,68 @@ extension PeopleService {
         let user = try req.auth.require(User.self)
         let db = db ?? req.db
 
-        guard let person = try? Person(from: data, creatorID: user.requireID()) else {
-            throw PersonError(.couldNotParse)
-        }
-
-        guard let tree = try? await person.$tree.get(on: db) else {
+        guard let tree = try? await req.trees.get(id: data.treeID) else {
             throw PersonError(.treeNotFound)
         }
 
-        try await db.transaction { db in
-            try await person.save(on: db)
+        guard tree.rootFamilyID != nil else {
+            return try await db.transaction { db in
+                let firstFamily = try await req.familiesService.create(treeID: data.treeID, on: db)
+                let person = try Person(from: data, creatorID: user.requireID(), familyID: firstFamily.requireID())
+                tree.rootFamilyID = try firstFamily.requireID()
 
-            if try await tree.$families.get(on: db).isEmpty {
-                if data.childOf != nil {
-                    req.logger.warning("Ommiting childOf parameter when creating a person - first person in a tree ")
-                }
+                try await person.save(on: db)
+                try await tree.save(on: db)
 
-                if data.partnerOf != nil {
-                    req.logger.warning("Ommiting partnerOf parameter when creating a person - first person in a tree ")
-                }
-
-                let family = try await req
-                    .familiesService
-                    .create(treeID: tree.requireID(), parents: [person.requireID()], on: db)
-
-                tree.rootFamilyID = try family.requireID()
-
-                try await tree.update(on: db)
-            } else {
-                if data.childOf == nil, data.partnerOf == nil {
-                    throw Abort(.badRequest, reason: "Person has either to be a child or a partner of someone")
-                }
-
-                if data.childOf != nil, data.partnerOf != nil {
-                    throw Abort(.badRequest, reason: "Cannot set a person to be both a child and a partner at a one time")
-                }
-
-                if let parentID = data.childOf {
-                    try await req
-                        .peopleService
-                        .addChild(personID: parentID, childID: person.requireID(), on: db)
-                }
-
-                if let partnerID = data.partnerOf {
-                    try await req
-                        .peopleService
-                        .addPartner(personID: partnerID, partnerID: person.requireID(), on: db)
-                }
+                return person
             }
         }
 
-        return person
+        guard (data.childOf != nil && data.partnerOf == nil)
+            || (data.childOf == nil && data.partnerOf != nil)
+        else {
+            throw Abort(.badRequest, reason: "Both partnerOf and childOf specified")
+        }
+
+        return try await db.transaction { db in
+            let personRepository = getPersonRepository(db)
+
+            if data.childOf != nil {
+                guard let parent = try await personRepository.byID(data.childOf!)
+                    .filter(\.$tree.$id == data.treeID)
+                    .with(\.$family)
+                    .first()
+                else {
+                    throw Abort(.badRequest, reason: "Parent not found in the specified tree")
+                }
+
+                let childFamily = try await req.familiesService.create(treeID: data.treeID, on: db)
+
+                let person = try Person(from: data,
+                                        creatorID: user.requireID(),
+                                        familyID: childFamily.requireID(),
+                                        parentFamilyID: parent.family.requireID())
+                try await person.save(on: db)
+
+                return person
+            }
+            // data.partnerOf != nil
+            else {
+                guard let partner = try await personRepository.byID(data.partnerOf!)
+                    .filter(\.$tree.$id == data.treeID)
+                    .with(\.$family)
+                    .first()
+                else {
+                    throw Abort(.badRequest, reason: "Partner not found in the specified tree")
+                }
+
+                let person = try Person(from: data,
+                                        creatorID: user.requireID(),
+                                        familyID: partner.family.requireID())
+                try await person.save(on: db)
+
+                return person
+            }
+        }
     }
 }

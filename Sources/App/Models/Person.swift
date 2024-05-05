@@ -25,21 +25,19 @@ final class Person: Model, Content {
     @Group(key: "date_of")
     var dateOf: Dates
 
-    /// The `family` field is a `[Family]`, since we might allow to
-    /// add the same person multiple times in the tree.
-    @Siblings(through: ParentLink.self, from: \.$id.$person, to: \.$id.$family)
-    var family: [Family]
+    @Parent(key: "family_id")
+    var family: Family
 
-    /// The `parentFamily` field is a `[Family]`, since we might allow to
-    /// add the same person multiple times in the tree.
-    @Siblings(through: ChildLink.self, from: \.$id.$person, to: \.$id.$family)
-    var parentFamily: [Family]
+    @OptionalParent(key: "parent_family_id")
+    var parentFamily: Family?
 
     init() {}
 
     init(id: UUID? = nil,
          creatorID: UUID,
          treeID: UUID,
+         familyID: UUID,
+         parentFamilyID: UUID? = nil,
          givenNames: String,
          familyName: String,
          birthName: String? = nil,
@@ -48,6 +46,8 @@ final class Person: Model, Content {
         self.id = id
         $creator.id = creatorID
         $tree.id = treeID
+        $family.id = familyID
+        $parentFamily.id = parentFamilyID
         self.givenNames = givenNames
         self.familyName = familyName
         self.birthName = birthName
@@ -56,21 +56,14 @@ final class Person: Model, Content {
 
     func nuke(on db: Database) async throws {
         try await db.transaction { db in
-            let families = try await self.$family.get(on: db)
+            let family = try await self.$family.get(on: db)
+            let parents = try await family.$parents.get(on: db)
 
-            for family in families {
-                // The deleted person is a parent of the family
-                let parents = try await family.$parents.get(on: db)
-
-                // So we either nuke it, or detach the person from the family
-                if parents.count == 1 {
-                    try await family.nuke(on: db)
-                } else {
-                    try await family.$parents.detach(self, on: db)
-                }
+            if parents.count == 1 {
+                try await family.nuke(on: db)
+            } else {
+                try await self.delete(on: db)
             }
-
-            try await self.delete(on: db)
         }
     }
 

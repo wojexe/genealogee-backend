@@ -3,20 +3,25 @@ import Vapor
 
 extension DatabaseFamilyRepository {
     func has(_ familyID: UUID, _ relation: FamilyRepositoryRelation) async throws -> Bool {
-        let family = try await get(familyID)
+        guard let family = try? await byID(familyID)
+            .with(\.$parents)
+            .with(\.$children)
+            .first()
+        else {
+            throw RepositoryError.notFound(familyID, Family.self)
+        }
 
         switch relation {
         case let .child(childID):
-            return try await family.$children.isAttached(toID: childID, on: req.db)
+            return try family.children.contains { try $0.requireID() == childID }
 
         case let .parent(parentID):
-            return try await family.$parents.isAttached(toID: parentID, on: req.db)
+            return try family.parents.contains { try $0.requireID() == parentID }
 
         case let .any(personID):
-            let isChild = try await family.$children.isAttached(toID: personID, on: req.db)
-            let isParent = try await family.$parents.isAttached(toID: personID, on: req.db)
-
-            return isChild || isParent
+            return try
+                family.children.contains { try $0.requireID() == personID }
+                || family.parents.contains { try $0.requireID() == personID }
         }
     }
 }

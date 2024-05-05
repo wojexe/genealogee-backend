@@ -2,9 +2,11 @@ import Fluent
 import Vapor
 
 extension Person {
-    convenience init(from snapshot: DTO.Snapshot, treeID: UUID, creatorID: UUID) {
+    convenience init(from snapshot: DTO.Snapshot, treeID: UUID, creatorID: UUID, familyID: UUID, parentFamilyID: UUID?) {
         self.init(creatorID: creatorID,
                   treeID: treeID,
+                  familyID: familyID,
+                  parentFamilyID: parentFamilyID,
                   givenNames: snapshot.givenNames,
                   familyName: snapshot.familyName,
                   birthName: snapshot.birthName,
@@ -15,6 +17,8 @@ extension Person {
 extension Person.DTO {
     struct Snapshot: Codable {
         let sourcePersonID: UUID
+        let sourceFamilyID: UUID
+        let sourceParentFamilyID: UUID?
         let givenNames: String
         let familyName: String
         let birthName: String?
@@ -22,6 +26,8 @@ extension Person.DTO {
 
         init(from person: Person) throws {
             sourcePersonID = try person.requireID()
+            sourceFamilyID = person.$family.id
+            sourceParentFamilyID = person.$parentFamily.id
             givenNames = person.givenNames
             familyName = person.familyName
             birthName = person.birthName

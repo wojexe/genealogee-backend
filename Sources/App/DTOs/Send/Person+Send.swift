@@ -25,8 +25,8 @@ extension Person.DTO {
             birthName = person.birthName
             dateOf = person.dateOf
 
-            familyID = try? await person.$family.get(on: db).first?.requireID()
-            parentFamilyID = try? await person.$parentFamily.get(on: db).first?.requireID()
+            familyID = person.$family.id
+            parentFamilyID = person.$parentFamily.id
         }
     }
 }

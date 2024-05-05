@@ -13,6 +13,8 @@ struct CreatePerson: AsyncMigration {
             .field("date_of_death", .datetime)
             .field("date_of_birth_custom", .custom("varchar(128)"))
             .field("date_of_death_custom", .custom("varchar(128)"))
+            .field("family_id", .uuid, .references("families", "id", onDelete: .cascade))
+            .field("parent_family_id", .uuid, .references("families", "id", onDelete: .cascade))
             .field("deleted_at", .datetime)
             .create()
     }
