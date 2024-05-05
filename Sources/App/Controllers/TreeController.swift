@@ -120,11 +120,7 @@ struct TreeController: RouteCollection {
         )
     }
 
-    func all(req: Request) async throws -> [Tree.DTO.Send] {
-        guard req.application.environment == .development else {
-            throw Abort(.notFound)
-        }
-
+    func all(req: Request) async throws -> Tree.DTO.SendAll {
         let trees = try await req
             .trees
             .scoped(by: .currentUser)
@@ -133,11 +129,7 @@ struct TreeController: RouteCollection {
             .with(\.$families)
             .all()
 
-        var DTOs: [Tree.DTO.Send] = []
-
-        for tree in trees {
-            try await DTOs.append(Tree.DTO.Send(tree, on: req.db))
-        }
+        let DTOs = try await Tree.DTO.SendAll(trees, on: req.db)
 
         return DTOs
     }

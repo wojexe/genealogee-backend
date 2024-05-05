@@ -5,7 +5,6 @@ extension Tree {
     convenience init(from req: DTO.Create, creatorID: UUID) throws {
         self.init(creatorID: creatorID, name: req.name)
     }
-
 }
 
 extension Tree.DTO {

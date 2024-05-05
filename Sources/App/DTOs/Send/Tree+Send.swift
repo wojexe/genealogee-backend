@@ -5,19 +5,26 @@ extension Tree.DTO {
     struct Send: Content {
         let id: UUID
         let creatorID: UUID
+
         let name: String
+
         let people: [Person.DTO.Send]
         let families: [Family.DTO.Send]
+
         let rootFamilyID: UUID?
+
         let snapshotIDs: [UUID]
 
         init(_ tree: Tree, on db: Database) async throws {
             id = try tree.requireID()
             creatorID = tree.$creator.id
+
             name = tree.name
-            rootFamilyID = tree.rootFamilyID
+
             people = try await Self.gatherPeople(from: tree, on: db)
             families = try await Self.gatherFamilies(from: tree, on: db)
+
+            rootFamilyID = tree.rootFamilyID
             snapshotIDs = try await tree.$snapshots.get(on: db).map { try $0.requireID() }
         }
 

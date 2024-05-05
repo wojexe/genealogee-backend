@@ -4,16 +4,17 @@ import Vapor
 extension PeopleService {
     func create(from data: Person.DTO.Create, on db: Database? = nil) async throws -> Person {
         let user = try req.auth.require(User.self)
+        let db = db ?? req.db
 
         guard let person = try? Person(from: data, creatorID: user.requireID()) else {
             throw PersonError(.couldNotParse)
         }
 
-        guard let tree = try? await person.$tree.get(on: req.db) else {
+        guard let tree = try? await person.$tree.get(on: db) else {
             throw PersonError(.treeNotFound)
         }
 
-        try await req.db.transaction { db in
+        try await db.transaction { db in
             try await person.save(on: db)
 
             if try await tree.$families.get(on: db).isEmpty {

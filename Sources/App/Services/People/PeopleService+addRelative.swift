@@ -32,21 +32,19 @@ extension PeopleService {
         }
 
         let family = try await db.transaction { db in
-            var family = personWithFamily.family.first
-
-            if family == nil {
+            if personWithFamily.family.first == nil {
                 req.logger.info("Person does not have a family, creating one")
 
-                family = try await req
-                    .familiesService
-                    .create(treeID: personWithFamily.tree.requireID(),
-                                  parents: [personWithFamily.requireID()],
-                                  on: db)
+                personWithFamily.$family.value = try await [
+                    req
+                        .familiesService
+                        .create(treeID: personWithFamily.tree.requireID(),
+                                parents: [personWithFamily.requireID()],
+                                on: db),
+                ]
             }
 
-            guard let family else {
-                throw Abort(.internalServerError, reason: "Could not create family")
-            }
+            let family = personWithFamily.family.first!
 
             try await req.familiesService.addRelative(familyID: family.requireID(), relative, on: db)
 

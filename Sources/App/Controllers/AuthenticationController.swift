@@ -9,6 +9,7 @@ struct AuthenticationController: RouteCollection {
             .grouped([User.authenticator(), User.credentialsAuthenticator()])
             .post("login", use: login)
 
+        auth.post("logout", use: logout)
         auth.post("register", use: register)
 
         auth.get("me", use: getCurrentUser)
@@ -16,6 +17,13 @@ struct AuthenticationController: RouteCollection {
 
     func login(req: Request) throws -> HTTPStatus {
         try req.auth.require(User.self)
+
+        return .ok
+    }
+
+    func logout(req: Request) throws -> HTTPStatus {
+        try req.auth.require(User.self)
+        req.auth.logout(User.self)
 
         return .ok
     }

@@ -12,7 +12,7 @@ public func configure(_ app: Application) async throws {
 
     app.migrations.add(SessionRecord.migration)
 
-    // json date decoder
+    // Ability to parse JS dates
 
     let jsDateFormatter = DateFormatter()
     jsDateFormatter.calendar = Calendar(identifier: .iso8601)
@@ -21,11 +21,43 @@ public func configure(_ app: Application) async throws {
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .formatted(jsDateFormatter)
 
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .formatted(jsDateFormatter)
+
+    ContentConfiguration.global.use(encoder: encoder, for: .json)
     ContentConfiguration.global.use(decoder: decoder, for: .json)
 
-    // json fin
+    // TLS
 
-    // Add CORS middleware for prod
+    app.http.server.configuration.tlsConfiguration = try .makeServerConfiguration(
+        certificateChain: NIOSSLCertificate.fromPEMFile("./certs/cert.pem").map { .certificate($0) },
+        privateKey: .file("./certs/key.pem")
+    )
+
+    // Middlewares
+
+    let corsConfiguration = CORSMiddleware.Configuration(
+        allowedOrigin: .any(["http://127.0.0.1", "http://localhost", "http://localhost:5173", "https://localhost:5173"]),
+        allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
+        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith,
+                         .userAgent, .accessControlAllowOrigin, HTTPHeaders.Name("x-sveltekit-action"),
+                         .accessControlAllowHeaders, .accessControlAllowCredentials, .accessControlAllowMethods], // FIXME: this is rather dangerous lol
+        allowCredentials: true
+    )
+
+    let cors = CORSMiddleware(configuration: corsConfiguration)
+
+    // Sessions
+
+    app.sessions.configuration.cookieFactory = { sessionID in
+        .init(string: sessionID.string,
+              maxAge: 60 * 60 * 24 * 365,
+              isSecure: true,
+              isHTTPOnly: false,
+              sameSite: HTTPCookies.SameSitePolicy.none)
+    }
+
+    app.middleware.use(cors, at: .beginning)
 
     app.middleware.use(app.sessions.middleware)
     app.middleware.use(User.sessionAuthenticator())
@@ -36,7 +68,7 @@ public func configure(_ app: Application) async throws {
     case .development: fallthrough
     case .testing:
         app.sessions.use(.memory)
-        app.logger.logLevel = .trace
+        // app.logger.logLevel = .trace
 
     default:
         app.sessions.use(.fluent)

@@ -13,7 +13,6 @@ extension Person {
 }
 
 extension Person.DTO {
-
     final class Create: Content, Validatable {
         var treeID: UUID
         var givenNames: String
