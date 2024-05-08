@@ -27,13 +27,6 @@ public func configure(_ app: Application) async throws {
     ContentConfiguration.global.use(encoder: encoder, for: .json)
     ContentConfiguration.global.use(decoder: decoder, for: .json)
 
-    // TLS
-
-    app.http.server.configuration.tlsConfiguration = try .makeServerConfiguration(
-        certificateChain: NIOSSLCertificate.fromPEMFile("./certs/cert.pem").map { .certificate($0) },
-        privateKey: .file("./certs/key.pem")
-    )
-
     // Middlewares
 
     let corsConfiguration = CORSMiddleware.Configuration(
@@ -66,7 +59,13 @@ public func configure(_ app: Application) async throws {
     app.passwords.use(.bcrypt)
 
     switch app.environment {
-    case .development: fallthrough
+    case .development:
+        app.http.server.configuration.tlsConfiguration = try .makeServerConfiguration(
+            certificateChain: NIOSSLCertificate.fromPEMFile("./certs/cert.pem").map { .certificate($0) },
+            privateKey: .file("./certs/key.pem")
+        )
+
+        fallthrough
     case .testing:
         app.sessions.use(.memory)
 
