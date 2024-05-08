@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:5.10
 import PackageDescription
 
 let package = Package(
@@ -8,17 +8,17 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.88.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.97.0"),
         // 🗄 An ORM for SQL and NoSQL databases.
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.8.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.10.0"),
         // 🪶 Fluent driver for PostgreSQL.
-        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.8.0"),
+        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.9.0"),
         // 🪶 Fluent driver for SQLite.
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.6.0"),
         // 🥞 A powerful SQL query builder.
         .package(url: "https://github.com/vapor/sql-kit.git", from: "3.0.0"),
         // Fake data generator for mocks
-        .package(url: "https://github.com/vadymmarkov/Fakery", from: "5.0.0"),
+        .package(url: "https://github.com/vadymmarkov/Fakery", from: "5.1.0"),
     ],
     targets: [
         .executableTarget(

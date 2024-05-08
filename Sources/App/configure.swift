@@ -37,11 +37,12 @@ public func configure(_ app: Application) async throws {
     // Middlewares
 
     let corsConfiguration = CORSMiddleware.Configuration(
-        allowedOrigin: .any(["http://127.0.0.1", "http://localhost", "http://localhost:5173", "https://localhost:5173"]),
-        allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
+        allowedOrigin: .any(["https://localhost:5173", "https://localhost:4173",
+                             "https://genealogee.app"]),
+        allowedMethods: [.GET, .POST, .DELETE, .PATCH, .OPTIONS],
         allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith,
-                         .userAgent, .accessControlAllowOrigin, HTTPHeaders.Name("x-sveltekit-action"),
-                         .accessControlAllowHeaders, .accessControlAllowCredentials, .accessControlAllowMethods], // FIXME: this is rather dangerous lol
+                         .userAgent, .accessControlAllowOrigin, .accessControlAllowHeaders,
+                         .accessControlAllowCredentials, .accessControlAllowMethods],
         allowCredentials: true
     )
 
@@ -68,11 +69,9 @@ public func configure(_ app: Application) async throws {
     case .development: fallthrough
     case .testing:
         app.sessions.use(.memory)
-        // app.logger.logLevel = .trace
 
     default:
         app.sessions.use(.fluent)
-        app.logger.logLevel = .info
     }
 
     app.trees.use { DatabaseTreeRepository(req: $0) }

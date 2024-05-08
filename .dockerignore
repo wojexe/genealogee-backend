@@ -1,2 +1,4 @@
 .build/
 .swiftpm/
+.vscode/
+db.sqlite
