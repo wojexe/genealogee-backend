@@ -19,9 +19,9 @@ protocol TreeRepository {
     func has(_ id: UUID) async throws -> Bool
 }
 
-struct TreeRepositoryFactory {
-    var make: ((Request) -> TreeRepository)?
-    mutating func use(_ make: @escaping ((Request) -> TreeRepository)) {
+struct TreeRepositoryFactory: Sendable {
+    var make: (@Sendable (Request) -> TreeRepository)?
+    mutating func use(_ make: @escaping (@Sendable (Request) -> TreeRepository)) {
         self.make = make
     }
 }

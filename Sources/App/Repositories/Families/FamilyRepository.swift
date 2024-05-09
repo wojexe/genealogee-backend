@@ -26,9 +26,9 @@ protocol FamilyRepository {
     func has(_ familyID: UUID, _ relation: FamilyRepositoryRelation) async throws -> Bool
 }
 
-struct FamilyRepositoryFactory {
-    var make: ((Request) -> FamilyRepository)?
-    mutating func use(_ make: @escaping ((Request) -> FamilyRepository)) {
+struct FamilyRepositoryFactory: Sendable {
+    var make: (@Sendable (Request) -> FamilyRepository)?
+    mutating func use(_ make: @escaping (@Sendable (Request) -> FamilyRepository)) {
         self.make = make
     }
 }

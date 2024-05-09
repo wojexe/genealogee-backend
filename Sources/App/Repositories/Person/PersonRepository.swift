@@ -25,9 +25,9 @@ protocol PersonRepository {
     func has(_ ids: [UUID]) async throws -> Bool
 }
 
-struct PersonRepositoryFactory {
-    var make: ((Request) -> PersonRepository)?
-    mutating func use(_ make: @escaping ((Request) -> PersonRepository)) {
+struct PersonRepositoryFactory: Sendable {
+    var make: (@Sendable (Request) -> PersonRepository)?
+    mutating func use(_ make: @escaping (@Sendable (Request) -> PersonRepository)) {
         self.make = make
     }
 }

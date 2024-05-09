@@ -21,9 +21,9 @@ protocol TreeSnapshotRepository {
     func get(by: TreeSnapshotRepositoryGetBy) async throws -> TreeSnapshot
 }
 
-struct TreeSnapshotRepositoryFactory {
-    var make: ((Request) -> TreeSnapshotRepository)?
-    mutating func use(_ make: @escaping ((Request) -> TreeSnapshotRepository)) {
+struct TreeSnapshotRepositoryFactory: Sendable {
+    var make: (@Sendable (Request) -> TreeSnapshotRepository)?
+    mutating func use(_ make: @escaping (@Sendable (Request) -> TreeSnapshotRepository)) {
         self.make = make
     }
 }
