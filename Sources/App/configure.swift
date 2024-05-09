@@ -82,7 +82,7 @@ public func configure(_ app: Application) async throws {
 }
 
 private func configureDatabase(_ app: Application) throws {
-    let postgresURL = Environment.get("POSTGRES_URL")
+    let postgresURL = Environment.get("DATABASE_URL")
 
     switch app.environment {
     case .production:
