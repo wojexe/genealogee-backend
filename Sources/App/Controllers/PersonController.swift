@@ -13,6 +13,7 @@ struct PersonController: RouteCollection {
         routes.get("people", use: all)
     }
 
+    @Sendable
     func create(req: Request) async throws -> Person.DTO.Send {
         try Person.DTO.Create.validate(content: req)
 
@@ -24,6 +25,7 @@ struct PersonController: RouteCollection {
         )
     }
 
+    @Sendable
     func update(req: Request) async throws -> Person.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
 
@@ -37,6 +39,7 @@ struct PersonController: RouteCollection {
         )
     }
 
+    @Sendable
     func delete(req: Request) async throws -> HTTPStatus {
         let personID = try req.parameters.require("personID", as: UUID.self)
 
@@ -45,6 +48,7 @@ struct PersonController: RouteCollection {
         return .ok
     }
 
+    @Sendable
     func byID(req: Request) async throws -> Person.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
 
@@ -56,6 +60,7 @@ struct PersonController: RouteCollection {
 
     // MARK: - Connections (currently unavailable)
 
+    @Sendable
     func partner(req: Request) async throws -> Family.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
         let partnerID = try req.parameters.require("partnerID", as: UUID.self)
@@ -66,6 +71,7 @@ struct PersonController: RouteCollection {
         )
     }
 
+    @Sendable
     func child(req: Request) async throws -> Family.DTO.Send {
         let personID = try req.parameters.require("personID", as: UUID.self)
         let childID = try req.parameters.require("childID", as: UUID.self)
@@ -78,6 +84,7 @@ struct PersonController: RouteCollection {
 
     // MARK: - Development
 
+    @Sendable
     func all(req: Request) async throws -> [Person] {
         guard req.application.environment == .development else {
             throw Abort(.notFound)

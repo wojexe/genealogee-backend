@@ -43,6 +43,7 @@ struct TreeController: RouteCollection {
         routes.delete("trees", use: nukeAllTrees)
     }
 
+    @Sendable
     func create(req: Request) async throws -> Tree.DTO.Send {
         try Tree.DTO.Create.validate(content: req)
 
@@ -54,6 +55,7 @@ struct TreeController: RouteCollection {
         )
     }
 
+    @Sendable
     func delete(req: Request) async throws -> HTTPStatus {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
@@ -62,6 +64,7 @@ struct TreeController: RouteCollection {
         return .ok
     }
 
+    @Sendable
     func createSnapshot(req: Request) async throws -> TreeSnapshot.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
@@ -71,6 +74,7 @@ struct TreeController: RouteCollection {
         )
     }
 
+    @Sendable
     func getLatestSnapshot(req: Request) async throws -> TreeSnapshot.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
@@ -79,6 +83,7 @@ struct TreeController: RouteCollection {
         return try .init(snapshot, on: req.db)
     }
 
+    @Sendable
     func restoreLatestSnapshot(req: Request) async throws -> Tree.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
@@ -89,6 +94,7 @@ struct TreeController: RouteCollection {
         return try await .init(tree, on: req.db)
     }
 
+    @Sendable
     func getSnapshot(req: Request) async throws -> TreeSnapshot.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
         let snapshotID = try req.parameters.require("snapshotID", as: UUID.self)
@@ -102,6 +108,7 @@ struct TreeController: RouteCollection {
         return try .init(snapshot, on: req.db)
     }
 
+    @Sendable
     func restoreSnapshot(req: Request) async throws -> Tree.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
         let snapshotID = try req.parameters.require("snapshotID", as: UUID.self)
@@ -111,6 +118,7 @@ struct TreeController: RouteCollection {
         return try await .init(tree, on: req.db)
     }
 
+    @Sendable
     func byID(req: Request) async throws -> Tree.DTO.Send {
         let treeID = try req.parameters.require("treeID", as: UUID.self)
 
@@ -120,6 +128,7 @@ struct TreeController: RouteCollection {
         )
     }
 
+    @Sendable
     func all(req: Request) async throws -> Tree.DTO.SendAll {
         let trees = try await req
             .trees
@@ -136,6 +145,7 @@ struct TreeController: RouteCollection {
 
     // MARK: - Development
 
+    @Sendable
     func nukeAllTrees(req: Request) async throws -> HTTPStatus {
         guard req.application.environment == .development else {
             throw Abort(.notFound)

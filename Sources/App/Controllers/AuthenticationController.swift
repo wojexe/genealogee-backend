@@ -15,12 +15,14 @@ struct AuthenticationController: RouteCollection {
         auth.get("me", use: getCurrentUser)
     }
 
+    @Sendable
     func login(req: Request) throws -> HTTPStatus {
         try req.auth.require(User.self)
 
         return .ok
     }
 
+    @Sendable
     func logout(req: Request) throws -> HTTPStatus {
         try req.auth.require(User.self)
         req.auth.logout(User.self)
@@ -28,6 +30,7 @@ struct AuthenticationController: RouteCollection {
         return .ok
     }
 
+    @Sendable
     func register(req: Request) async throws -> HTTPStatus {
         try User.DTO.Create.validate(content: req)
 
@@ -56,6 +59,7 @@ struct AuthenticationController: RouteCollection {
         return .created
     }
 
+    @Sendable
     func getCurrentUser(req: Request) throws -> User.DTO.Send {
         let user = try req.auth.require(User.self)
 

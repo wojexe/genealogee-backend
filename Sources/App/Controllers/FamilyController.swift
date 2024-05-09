@@ -9,10 +9,12 @@ struct FamilyController: RouteCollection {
     }
 
     // TODO: implement
+    @Sendable
     func delete(_: Request) async throws -> HTTPStatus {
         throw Abort(.notImplemented)
     }
 
+    @Sendable
     func all(req: Request) async throws -> [Family] {
         guard req.application.environment == .development else {
             throw Abort(.notFound)

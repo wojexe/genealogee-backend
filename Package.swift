@@ -10,9 +10,9 @@ let package = Package(
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.97.0"),
         // 🗄 An ORM for SQL and NoSQL databases.
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.10.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.9.0"),
         // 🪶 Fluent driver for PostgreSQL.
-        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.9.0"),
+        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.8.0"),
         // 🪶 Fluent driver for SQLite.
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.6.0"),
         // 🥞 A powerful SQL query builder.
@@ -30,7 +30,8 @@ let package = Package(
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "SQLKit", package: "sql-kit"),
             ],
-            path: "Sources/App"
+            path: "Sources/App",
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "AppTests",
@@ -45,7 +46,13 @@ let package = Package(
                 .product(name: "SQLKit", package: "sql-kit"),
                 .product(name: "Fakery", package: "Fakery"),
             ],
-            path: "Tests/App"
+            path: "Tests/App",
+            swiftSettings: swiftSettings
         ),
     ]
 )
+
+var swiftSettings: [SwiftSetting] { [
+    .enableUpcomingFeature("DisableOutwardActorInference"),
+    .enableExperimentalFeature("StrictConcurrency"),
+] }
