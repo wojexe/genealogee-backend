@@ -6,8 +6,8 @@ FROM swift:5.10-jammy as build
 # Install OS updates
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q update \
-    && apt-get -q dist-upgrade -y\
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get -q dist-upgrade -y \
+    && apt-get install -y libjemalloc-dev
 
 # Set up a build area
 WORKDIR /build

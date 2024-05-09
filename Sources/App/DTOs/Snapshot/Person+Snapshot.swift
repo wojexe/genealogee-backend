@@ -55,9 +55,11 @@ extension Dates.DTO {
         let deathCustom: String?
 
         init(from dateOf: Dates) {
-            birth = dateOf.birth?.ISO8601Format()
+            let formatter = ISO8601DateFormatter()
+
+            birth = dateOf.birth != nil ? formatter.string(from: dateOf.birth!) : nil
             birthCustom = dateOf.birthCustom
-            death = dateOf.death?.ISO8601Format()
+            death = dateOf.death != nil ? formatter.string(from: dateOf.death!) : nil
             deathCustom = dateOf.deathCustom
         }
     }
