@@ -30,7 +30,7 @@ public func configure(_ app: Application) async throws {
     // Middlewares
 
     let corsConfiguration = CORSMiddleware.Configuration(
-        allowedOrigin: .any(["https://localhost:5173", "https://localhost:4173",
+        allowedOrigin: .any(["https://localhost:8788","https://localhost:5173", "https://localhost:4173",
                              "https://genealogee.app"]),
         allowedMethods: [.GET, .POST, .DELETE, .PATCH, .OPTIONS],
         allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith,
@@ -43,12 +43,14 @@ public func configure(_ app: Application) async throws {
 
     // Sessions
 
+    let cookieDomain = app.environment == .development ? "localhost" : "genealogee.app"
     app.sessions.configuration.cookieFactory = { sessionID in
         .init(string: sessionID.string,
-              maxAge: 60 * 60 * 24 * 365,
+              maxAge: 60 * 60 * 24 * 7,
+              domain: cookieDomain,
               isSecure: true,
               isHTTPOnly: false,
-              sameSite: HTTPCookies.SameSitePolicy.none)
+              sameSite: HTTPCookies.SameSitePolicy.strict)
     }
 
     app.middleware.use(cors, at: .beginning)
