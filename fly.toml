@@ -1,18 +1,13 @@
-# fly.toml app configuration file generated for genealogy-backend on 2024-05-09T02:47:51+02:00
+# fly.toml app configuration file generated for genealogee-backend on 2024-05-09T03:09:11+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'genealogy-backend'
+app = 'genealogee-backend'
 primary_region = 'waw'
 
-[build]
-  dockerfile = "Dockerfile"
-  ignorefile = ".dockerignore"
-  build-target = "build"
-
 [deploy]
-  release_command = "migrate --yes"
+  release_command = 'migrate --yes --env production'
 
 [http_service]
   internal_port = 8080
