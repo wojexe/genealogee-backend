@@ -7,7 +7,7 @@ extension PeopleService {
 
         person.givenNames = data.givenNames ?? person.givenNames
         person.familyName = data.familyName ?? person.familyName
-        person.birthName = data.birthName ?? person.birthName
+        person.birthName = data.birthName
         person.dateOf = data.dateOf ?? person.dateOf
 
         try await person.save(on: req.db)
