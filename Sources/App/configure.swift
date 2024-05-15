@@ -8,9 +8,7 @@ public func configure(_ app: Application) async throws {
 
     app.databases.middleware.use(UserMiddleware())
 
-    app.migrations.add(CreateMigrations.all())
-
-    app.migrations.add(SessionRecord.migration)
+    addMigrations(app.migrations)
 
     // Ability to parse JS dates
 
@@ -30,7 +28,7 @@ public func configure(_ app: Application) async throws {
     // Middlewares
 
     let corsConfiguration = CORSMiddleware.Configuration(
-        allowedOrigin: .any(["https://localhost:8788","https://localhost:5173", "https://localhost:4173",
+        allowedOrigin: .any(["https://localhost:8788", "https://localhost:5173", "https://localhost:4173",
                              "https://genealogee.app"]),
         allowedMethods: [.GET, .POST, .DELETE, .PATCH, .OPTIONS],
         allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith,
@@ -83,15 +81,14 @@ public func configure(_ app: Application) async throws {
     try routes(app)
 }
 
+private func addMigrations(_ migrations: Migrations) {
+    migrations.add(CreateMigrations.all())
+    migrations.add(SessionRecord.migration)
+    migrations.add(AddTreeCreatedAt())
+}
+
 private func configureDatabase(_ app: Application) throws {
     let postgresURL = Environment.get("DATABASE_URL")
 
-    switch app.environment {
-    case .production:
-        try app.databases.use(.postgres(url: postgresURL!), as: .psql)
-    case .testing:
-        app.databases.use(.sqlite(.memory), as: .sqlite)
-    default:
-        app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
-    }
+    try app.databases.use(.postgres(url: postgresURL!), as: .psql)
 }

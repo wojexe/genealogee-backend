@@ -25,6 +25,9 @@ final class Tree: Model, Content {
     @Children(for: \.$tree)
     var snapshots: [TreeSnapshot]
 
+    @Timestamp(key: "created_at", on: .create)
+    var createdAt: Date?
+
     init() {}
 
     init(id: UUID? = nil,
