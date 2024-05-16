@@ -5,6 +5,7 @@ extension Tree.DTO {
     struct Send: Content {
         let id: UUID
         let creatorID: UUID
+        let created_at: Date?;
 
         let name: String
 
@@ -18,6 +19,7 @@ extension Tree.DTO {
         init(_ tree: Tree, on db: Database) async throws {
             id = try tree.requireID()
             creatorID = tree.$creator.id
+            created_at = tree.createdAt;
 
             name = tree.name
 
