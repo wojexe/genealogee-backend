@@ -47,8 +47,8 @@ public func configure(_ app: Application) async throws {
               maxAge: 60 * 60 * 24 * 7,
               domain: cookieDomain,
               isSecure: true,
-              isHTTPOnly: false,
-              sameSite: HTTPCookies.SameSitePolicy.strict)
+              isHTTPOnly: true,
+              sameSite: HTTPCookies.SameSitePolicy.lax)
     }
 
     app.middleware.use(cors, at: .beginning)
